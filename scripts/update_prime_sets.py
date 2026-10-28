@@ -20,6 +20,7 @@ HISTORY_ROOT = "https://relics.run/history/"
 CATALOG_URL = HISTORY_ROOT + "item_data/item_ids.json"
 DEFAULT_OUTPUT = Path(__file__).resolve().parents[1] / "site/data/prime-sets.json"
 DEFAULT_REUSE = "https://saerdev.github.io/Tenno-Ticker/data/prime-sets.json"
+LEGACY_REUSE = "https://saerdev.github.io/Arcane-Atlas/data/prime-sets.json"
 USER_AGENT = os.environ.get(
     "RELICS_USER_AGENT", "TennoTicker/1.0 (+https://github.com/Saerdev/Tenno-Ticker)"
 )
@@ -205,6 +206,9 @@ def save_atomic(path: Path, payload: dict) -> None:
 
 def update(output: Path, reuse_url: str | None) -> str:
     previous = load_existing(reuse_url) if reuse_url else None
+    # Keep daily reuse working before GitHub's repository/Pages URL is renamed.
+    if previous is None and reuse_url == DEFAULT_REUSE:
+        previous = load_existing(LEGACY_REUSE)
     # Schema 2 snapshots lack the seven-day comparison and must be rebuilt.
     if previous and previous.get("schemaVersion") != 3:
         previous = None

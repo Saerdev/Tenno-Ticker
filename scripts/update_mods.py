@@ -23,6 +23,7 @@ SITE_ROOT = Path(__file__).resolve().parents[1] / "site/data"
 DEFAULT_MODS = SITE_ROOT / "mods.json"
 DEFAULT_ARCANES = SITE_ROOT / "arcane-daily.json"
 PAGES_ROOT = "https://saerdev.github.io/Tenno-Ticker/data/"
+LEGACY_PAGES_ROOT = "https://saerdev.github.io/Arcane-Atlas/data/"
 
 
 def market_items(catalog: object, category: str) -> list[dict]:
@@ -170,6 +171,11 @@ def optional_previous(url: str, category: str) -> dict | None:
 def update(mod_output: Path, arcane_output: Path, reuse: bool = True) -> str:
     previous_mods = optional_previous(PAGES_ROOT + "mods.json", "mod") if reuse else None
     previous_arcanes = optional_previous(PAGES_ROOT + "arcane-daily.json", "arcane") if reuse else None
+    # The old project Pages URL remains usable until the repository is renamed.
+    if reuse and previous_mods is None:
+        previous_mods = optional_previous(LEGACY_PAGES_ROOT + "mods.json", "mod")
+    if reuse and previous_arcanes is None:
+        previous_arcanes = optional_previous(LEGACY_PAGES_ROOT + "arcane-daily.json", "arcane")
     try:
         date = latest_history_date(download(HISTORY_ROOT, 750_000).decode("utf-8"))
         if (previous_mods and previous_arcanes and reusable(previous_mods, date, "mod")
