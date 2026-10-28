@@ -402,7 +402,7 @@
       state.loadingCatalog = false;
       if (state.failed && els.error.hidden) {
         notice(`${state.failed} arcane statistics were unavailable in this snapshot and are shown as missing.`);
-      } else if (Date.now() - state.completedAt > 3 * 3600000) {
+      } else if (els.error.hidden && Date.now() - state.completedAt > 3 * 3600000) {
         notice('This statistics snapshot is more than 3 hours old. Reported closed-order prices may be stale.');
       }
     } catch (error) {

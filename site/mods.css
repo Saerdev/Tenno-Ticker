@@ -14,5 +14,6 @@
 .mod-more-wrap button:hover{background:#20483f}
 .mod-panel .prime-table-meta{flex-wrap:wrap}
 .mod-panel .table-scroll-hint{display:none}
+.mod-panel .acquisition-footer a,.acquisition-tooltip .acquisition-footer a{color:#d5bd95;font-weight:700}
 @media(max-width:900px){.mod-panel .table-scroll-hint{display:block}}
 @media(max-width:660px){.mod-panel .prime-table-meta{gap:4px}.mod-panel .rank-pick{width:100%}}
