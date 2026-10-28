@@ -1,10 +1,10 @@
 # Third-Party Notices and Attribution
 
-Arcane Atlas is an unofficial Warframe community project. It is not affiliated with, endorsed by, or operated by Digital Extremes, Warframe.market, WFCD, or the Warframe Wiki.
+Tenno Ticker is an unofficial Warframe community project. It is not affiliated with, endorsed by, or operated by Digital Extremes, Warframe.market, WFCD, Relics.run, or the Warframe Wiki.
 
 ## Warframe.market — pricing and market activity
 
-Arcane Atlas retrieves its arcane catalog from the [Warframe.market API](https://warframe.market/) v2 and reported closed-order prices and 48-hour volume from the legacy v1 statistics endpoint. Prices are derived from hourly aggregated reports, not active buy/sell orders. Data is updated hourly when reported volume is nonzero; it is not proof of completed player-to-player trades.
+Tenno Ticker retrieves its arcane catalog and supplemental 48-hour statistics from the [Warframe.market API](https://warframe.market/). The visible Arcane price table uses daily reported closed-order medians and volumes from Relics.run. These statistics are not active buy/sell orders or proof of completed player-to-player trades.
 
 - Website: https://warframe.market/
 - API rules: https://docs.warframe.market/docs/rules/overview/
@@ -12,18 +12,18 @@ Arcane Atlas retrieves its arcane catalog from the [Warframe.market API](https:/
 
 Warframe.market is an independent service. Attribution does not imply permission, sponsorship, or endorsement. Use of its API remains subject to its applicable rules and terms.
 
-## Relics.run — historical Prime set prices
+## Relics.run — historical Prime Set, Mod, and Arcane prices
 
-The Prime Sets board uses the dated price-history files published by [Relics.run](https://relics.run/history/) and its item catalog. The site shows historical reported trade and order statistics, not live offers. Relics.run is a separate service and may derive market statistics from other trading services.
+The Prime Sets, Mods, and Arcanes boards use the dated price-history files published by [Relics.run](https://relics.run/history/) and its item catalog. The site shows reported closed-order statistics, not live offers. Mod and Arcane rank variants are displayed separately. Relics.run is a separate service and may derive market statistics from other trading services.
 
 - Source: https://relics.run/history/
 - Catalog: https://relics.run/history/item_data/
 
 Attribution does not imply sponsorship or permission to redistribute third-party data. Data access and reuse remain subject to any applicable terms of the source.
 
-## WFCD / warframe-items — arcane descriptions and acquisition data
+## WFCD / warframe-items — arcane effects and mod/arcane acquisition data
 
-Arcane effect descriptions, ranks, acquisition locations, and associated drop information are obtained from the community-maintained [WFCD/warframe-items](https://github.com/WFCD/warframe-items) dataset.
+Arcane effect descriptions, ranks, acquisition locations, and associated drop information, plus Mod acquisition locations, are obtained from the community-maintained [WFCD/warframe-items](https://github.com/WFCD/warframe-items) dataset.
 
 - Repository: https://github.com/WFCD/warframe-items
 - License: https://github.com/WFCD/warframe-items/blob/master/LICENSE
@@ -58,7 +58,7 @@ The MIT License for the WFCD repository does not grant separate rights to Warfra
 
 ## Warframe Wiki — external reference links
 
-Arcane Atlas links to relevant pages on the [Warframe Wiki](https://wiki.warframe.com/), but does not republish Wiki article text as part of this integration. Wiki content and assets remain subject to their respective licenses and terms.
+Tenno Ticker links to relevant pages on the [Warframe Wiki](https://wiki.warframe.com/), but does not republish Wiki article text as part of this integration. Wiki content and assets remain subject to their respective licenses and terms.
 
 ## Warframe and Digital Extremes — game intellectual property
 
@@ -67,4 +67,4 @@ Warframe, its characters, items, names, and associated game assets are the intel
 - Official Warframe website: https://www.warframe.com/
 - Warframe content policy: https://www.warframe.com/en/contentpolicy
 
-Third-party credits are provided to identify data sources and rights holders, not to imply any endorsement of Arcane Atlas.
+Third-party credits are provided to identify data sources and rights holders, not to imply any endorsement of Tenno Ticker.

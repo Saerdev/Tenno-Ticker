@@ -24,7 +24,7 @@ import urllib.request
 WIKI_API = "https://wiki.warframe.com/api.php"
 DEFAULT_CATALOG = Path(__file__).resolve().parents[1] / "site/data/prime-vault-status.json"
 DEFAULT_SNAPSHOT = Path(__file__).resolve().parents[1] / "site/data/prime-sets.json"
-USER_AGENT = "ArcaneAtlas/2.4 (+https://github.com/Saerdev/Arcane-Atlas)"
+USER_AGENT = "TennoTicker/1.0 (+https://github.com/Saerdev/Tenno-Ticker)"
 BATCH_SIZE = 20
 RESULT_PATTERN = re.compile(r"V(\d{3})=(-?\d+)")
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Download Warframe icon artwork for Arcane Atlas's static website.
+"""Download Warframe icon artwork for Tenno Ticker's static website.
 
 One-time asset acquisition, not a source-code patcher. From repository root:
     python scripts/fetch_site_icons.py
@@ -32,7 +32,7 @@ FAVICON = (
     "Lotus.Upgrades.CosmeticEnhancers.Utility."
     "GolemArcaneRadialEnergyOnEnergyPickup.png"
 )
-USER_AGENT = "ArcaneAtlas-IconSetup/1.1 (+https://github.com/Saerdev/Arcane-Atlas)"
+USER_AGENT = "TennoTicker-IconSetup/1.0 (+https://github.com/Saerdev/Tenno-Ticker)"
 PNG_MAGIC = b"\x89PNG\r\n\x1a\n"
 
 

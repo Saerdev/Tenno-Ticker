@@ -13,7 +13,8 @@
   };
 
   const state = {
-    items: [], prices: new Map(), favorites: readFavorites(), view: 'compare',
+    items: [], prices: new Map(), daily: new Map(), dailyDate: null,
+    favorites: readFavorites(), view: 'rank0',
     favoritesOnly: false, sort: 'name', direction: 'asc',
     active: false, processed: 0, failed: 0, completedAt: 0, volumeUpdatedAt: 0,
     renderPending: false, loadingCatalog: true, fetchSequence: 0, initialLoad: true, catalog: new Map(), tooltipTrigger: null, tooltipHideTimer: null,
@@ -115,12 +116,11 @@
     const amount = n(value);
     return amount == null
       ? '<span class="amount empty">—</span>'
-      : `<span class="amount ${cls}">${esc(amount.toLocaleString('en-US', { maximumFractionDigits: 2 }))}</span><span class="amount-pt">p</span>`;
+      : `<span class="amount ${cls}">${esc(Math.floor(amount).toLocaleString('en-US'))}</span><span class="amount-pt">p</span>`;
   }
-  function getStats(item, rank) { return state.prices.get(item.slug)?.stats?.[rank] || null; }
+  function getStats(item, rank) { return state.daily.get(item.slug)?.[rank] || null; }
   function salesVolume(item) {
-    const stats = state.prices.get(item.slug)?.stats;
-    return state.view === 'compare' ? stats?.volume48hAll ?? null : stats?.[state.view]?.volume48h ?? null;
+    return getStats(item, state.view)?.volume ?? null;
   }
   function showVolume(value) {
     return value == null ? '<span class="amount empty">—</span>'
@@ -129,11 +129,9 @@
   function sortVal(item) {
     switch (state.sort) {
       case 'name': return item.name.toLocaleLowerCase();
-      case 'rank0.avg48h': return getStats(item, 'rank0')?.avg48h ?? null;
-      case 'rankMax.avg48h': return getStats(item, 'rankMax')?.avg48h ?? null;
-      case 'rank0.latestHourly': return getStats(item, 'rank0')?.latestHourly ?? null;
-      case 'rankMax.latestHourly': return getStats(item, 'rankMax')?.latestHourly ?? null;
-      case 'sales48h': return salesVolume(item);
+      case 'medianClosedPrice': return getStats(item, state.view)?.medianClosedPrice ?? null;
+      case 'volume': return salesVolume(item);
+      case 'change7dPct': return getStats(item, state.view)?.change7dPct ?? null;
       default: return item.name.toLocaleLowerCase();
     }
   }
@@ -143,8 +141,7 @@
       if (q && !item.name.toLocaleLowerCase().includes(q)) return false;
       if (state.favoritesOnly && !state.favorites.has(item.slug)) return false;
       if (els.priced.checked) {
-        const ranks = state.view === 'compare' ? ['rank0', 'rankMax'] : [state.view];
-        if (!ranks.some((rank) => getStats(item, rank)?.avg48h != null)) return false;
+        if (getStats(item, state.view)?.medianClosedPrice == null) return false;
       }
       return true;
     }).sort((a, b) => {
@@ -163,27 +160,13 @@
     return `<th scope="col" data-sort="${esc(field)}" aria-sort="${current ? (state.direction === 'asc' ? 'ascending' : 'descending') : 'none'}">${label}${current ? `<span class="th-sort">${state.direction === 'asc' ? '↑' : '↓'}</span>` : ''}${note ? `<span class="th-unit">${note}</span>` : ''}</th>`;
   }
   function renderHeader() {
-    let columns;
-    if (state.view === 'compare') {
-      columns = [
-        header('Arcane', 'name', 'Item / max rank'),
-        header('Rank 0 · 48h Avg', 'rank0.avg48h', 'Volume-weighted reported closed-order average'),
-        header('Rank 0 · Last', 'rank0.latestHourly', 'Median in last hour with reported closed orders'),
-        header('Max · 48h Avg', 'rankMax.avg48h', 'Volume-weighted reported closed-order average'),
-        header('Max · Last', 'rankMax.latestHourly', 'Median in last hour with reported closed orders'),
-        header('48h Volume', 'sales48h', 'Reported closed orders · all ranks'),
-        '<th scope="col" data-sort="none">Actions</th>',
-      ];
-    } else {
-      const rank = state.view, scope = rank === 'rank0' ? 'Rank 0' : 'Max rank';
-      columns = [
-        header('Arcane', 'name', 'Item / max rank'),
-        header(scope + ' · 48h Avg', rank + '.avg48h', 'Volume-weighted closed-order average'),
-        header(scope + ' · Last', rank + '.latestHourly', 'Last reported traded hour'),
-        header('48h Volume', 'sales48h', 'Reported closed orders · selected rank'),
-        '<th scope="col" data-sort="none">Actions</th>',
-      ];
-    }
+    const columns = [
+      header('Arcane', 'name', 'Item / max rank'),
+      header('Median closed price', 'medianClosedPrice', 'Daily · selected rank'),
+      header('Volume', 'volume', 'Daily closed orders · selected rank'),
+      header('7-day change', 'change7dPct', 'Same rank · seven calendar days'),
+      '<th scope="col" data-sort="none">Wiki</th>',
+    ];
     els.head.innerHTML = `<tr>${columns.join('')}</tr>`;
   }
   function wikiUrl(item) {
@@ -299,15 +282,14 @@
     return `<div class="item-cell" data-acquisition="${esc(item.slug)}">${icon}<div class="item-details"><a class="item-name" target="_blank" rel="noopener noreferrer" href="${marketUrl}">${esc(item.name)}</a><span class="item-sub">${item.maxRank > 0 ? `MAX RANK ${item.maxRank}` : 'UNRANKED'}</span></div></div>`;
   }
   function row(item) {
-    const r0 = getStats(item, 'rank0'), max = getStats(item, 'rankMax');
+    const stat = getStats(item, state.view);
     const fav = state.favorites.has(item.slug);
-    const marketUrl = `https://warframe.market/items/${encodeURIComponent(item.slug)}`;
-    const action = `<td class="action-cell"><div class="action-group"><button type="button" class="favorite-btn${fav ? ' active' : ''}" aria-label="${fav ? 'Remove from' : 'Add to'} watchlist: ${esc(item.name)}" aria-pressed="${fav}" data-favorite="${esc(item.slug)}">${fav ? '★' : '☆'}</button><a class="outbound-link" href="${marketUrl}" target="_blank" rel="noopener noreferrer">Market ↗</a><a class="wiki-link" href="${esc(wikiUrl(item))}" target="_blank" rel="noopener noreferrer">Wiki ↗</a></div></td>`;
-    if (state.view === 'compare') {
-      return `<tr><td>${itemCell(item)}</td><td>${showPrice(r0?.avg48h, 'ask')}</td><td>${showPrice(r0?.latestHourly, 'bid')}</td><td>${showPrice(max?.avg48h, 'ask')}</td><td>${showPrice(max?.latestHourly, 'bid')}</td><td>${showVolume(salesVolume(item))}</td>${action}</tr>`;
-    }
-    const stat = state.view === 'rank0' ? r0 : max;
-    return `<tr><td>${itemCell(item)}</td><td>${showPrice(stat?.avg48h, 'ask')}</td><td>${showPrice(stat?.latestHourly, 'bid')}</td><td>${showVolume(salesVolume(item))}</td>${action}</tr>`;
+    const change = stat?.change7dPct;
+    const trend = change > 0 ? 'prime-change-up' : change < 0 ? 'prime-change-down' : 'prime-change-flat';
+    const changeText = change == null ? '<span class="prime-missing">—</span>' :
+      `<span class="prime-change ${trend}">${change > 0 ? '↑ +' : change < 0 ? '↓ −' : ''}${Math.abs(change).toFixed(1)}%</span>`;
+    const action = `<td class="action-cell"><div class="action-group"><button type="button" class="favorite-btn${fav ? ' active' : ''}" aria-label="${fav ? 'Remove from' : 'Add to'} watchlist: ${esc(item.name)}" aria-pressed="${fav}" data-favorite="${esc(item.slug)}">${fav ? '★' : '☆'}</button><a class="wiki-link" href="${esc(wikiUrl(item))}" target="_blank" rel="noopener noreferrer">Wiki ↗</a></div></td>`;
+    return `<tr><td>${itemCell(item)}</td><td>${showPrice(stat?.medianClosedPrice, 'ask')}</td><td>${showVolume(stat?.volume)}</td><td>${changeText}</td>${action}</tr>`;
   }
 
   function render() {
@@ -315,7 +297,7 @@
     state.renderPending = false;
     renderHeader();
     const matches = visibleItems();
-    const colSpan = state.view === 'compare' ? 7 : 5;
+    const colSpan = 5;
     if (matches.length === 0) {
       const message = state.loadingCatalog ? 'Loading the published arcane price snapshot…'
         : state.favoritesOnly && !state.favorites.size ? 'Your watchlist is empty. Star an arcane to save it here.'
@@ -369,6 +351,14 @@
     clearNotice();
     scheduleRender();
     try {
+      const dailyPromise = fetch(`./data/arcane-daily.json?t=${Date.now()}`, { cache: 'no-store' })
+        .then(async (response) => {
+          if (!response.ok) throw new Error(`Daily prices returned HTTP ${response.status}`);
+          const data = await response.json();
+          if (data.schemaVersion !== 1 || data.category !== 'arcane' || !Array.isArray(data.items))
+            throw new Error('Unsupported Arcane daily snapshot');
+          return data;
+        }).catch((error) => ({ error }));
       const response = await fetch(`./data/prices.json?t=${Date.now()}`, { cache: 'no-store' });
       if (!response.ok) throw new Error(`The published data file returned HTTP ${response.status}.`);
       const snapshot = await response.json();
@@ -392,14 +382,27 @@
       state.items = attachLocalVendorSources(snapshot.items, localVendorOffers);
       state.catalog = new Map(state.items.map((item) => [item.slug, item]));
       state.prices = new Map(snapshot.prices.map((p) => [p.slug, p]));
+      try {
+        const daily = await dailyPromise;
+        if (daily.error) throw daily.error;
+        state.daily = new Map(daily.items.map((item) => [item.slug, item]));
+        state.dailyDate = daily.sourceDate;
+        $('daily-source-date').textContent = daily.sourceDate;
+        const age = Math.floor((Date.now() - Date.parse(daily.sourceDate + 'T00:00:00Z')) / 86400000);
+        if (Number.isFinite(age) && age > 2) notice(`The latest daily Arcane prices are ${age} days old.`);
+      } catch (error) {
+        // Preserve any earlier working daily board during a refresh failure.
+        $('daily-source-date').textContent = state.dailyDate || 'Daily prices unavailable';
+        notice(`Daily Arcane price history unavailable: ${error.message}`);
+      }
       state.completedAt = Number(snapshot.completedAt) || 0;
       state.volumeUpdatedAt = state.completedAt;
       state.failed = Number(snapshot.failed) || 0;
       state.processed = state.prices.size;
       state.loadingCatalog = false;
-      if (state.failed) {
+      if (state.failed && els.error.hidden) {
         notice(`${state.failed} arcane statistics were unavailable in this snapshot and are shown as missing.`);
-      } else if (Date.now() - state.completedAt > 3 * 3600000) {
+      } else if (els.error.hidden && Date.now() - state.completedAt > 3 * 3600000) {
         notice('This statistics snapshot is more than 3 hours old. Reported closed-order prices may be stale.');
       }
     } catch (error) {
@@ -415,7 +418,7 @@
   }
 
   function setSort(field) {
-    if (field === 'none') return;
+    if (!['name', 'medianClosedPrice', 'volume', 'change7dPct'].includes(field)) return;
     if (state.sort === field) state.direction = state.direction === 'asc' ? 'desc' : 'asc';
     else {
       state.sort = field;
@@ -432,13 +435,12 @@
   }
   function csvValue(value) { return `"${String(value ?? '').replaceAll('"', '""')}"`; }
   function exportCSV() {
-    const headers = ['Arcane', 'Max Rank', 'Rank 0 48h Avg (pt)', 'Rank 0 Latest Hour Median (pt)', 'Rank 0 Latest Hour Time', 'Max Rank 48h Avg (pt)', 'Max Rank Latest Hour Median (pt)', 'Max Rank Latest Hour Time', '48h Volume (all ranks)', '48h Volume (rank 0)', '48h Volume (max rank)', 'Snapshot Updated At (UTC)', 'Market URL', 'Recorded Drop Sources', 'Wiki URL', 'Rank 0 Effect', 'Max Rank Effect'];
+    const headers = ['Arcane', 'Max Rank', 'Rank 0 Daily Median (pt)', 'Rank 0 Daily Volume', 'Rank 0 7d Change (%)', 'Max Rank Daily Median (pt)', 'Max Rank Daily Volume', 'Max Rank 7d Change (%)', 'Daily Source Date', 'Market URL', 'Recorded Drop Sources', 'Wiki URL', 'Rank 0 Effect', 'Max Rank Effect'];
     const data = visibleItems().map((item) => {
       const r0 = getStats(item, 'rank0'), max = getStats(item, 'rankMax');
-      return [item.name, item.maxRank, r0?.avg48h, r0?.latestHourly, r0?.latestHourAt,
-        max?.avg48h, max?.latestHourly, max?.latestHourAt,
-        state.prices.get(item.slug)?.stats?.volume48hAll, r0?.volume48h, max?.volume48h,
-        state.completedAt ? new Date(state.completedAt).toISOString() : '',
+      return [item.name, item.maxRank, r0?.medianClosedPrice, r0?.volume, r0?.change7dPct,
+        max?.medianClosedPrice, max?.volume, max?.change7dPct,
+        state.dailyDate || '',
         `https://warframe.market/items/${encodeURIComponent(item.slug)}`,
         (item.acquisitionSources || []).map((source) => source.location).join('; '), wikiUrl(item),
         item.effects?.rank0, item.effects?.rankMax].map(csvValue).join(',');
@@ -448,7 +450,7 @@
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `arcane-atlas-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.download = `tenno-ticker-arcanes-${new Date().toISOString().slice(0, 10)}.csv`;
     document.body.appendChild(link); link.click(); link.remove();
     setTimeout(() => URL.revokeObjectURL(url), 5000);
   }

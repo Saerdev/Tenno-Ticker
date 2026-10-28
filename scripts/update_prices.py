@@ -23,7 +23,7 @@ from vendor_offers import vendor_sources
 API_ROOT = "https://api.warframe.market/v2"
 STATISTICS_ROOT = "https://api.warframe.market/v1"
 DEFAULT_OUTPUT = Path(__file__).resolve().parents[1] / "site" / "data" / "prices.json"
-USER_AGENT = os.getenv("WFM_USER_AGENT", "ArcaneAtlas/2.1 (community arcane price dashboard)")
+USER_AGENT = os.getenv("WFM_USER_AGENT", "TennoTicker/1.0 (+https://github.com/Saerdev/Tenno-Ticker)")
 ACQUISITION_URL = "https://raw.githubusercontent.com/WFCD/warframe-items/master/data/json/Arcanes.json"
 WIKI_BASE = "https://wiki.warframe.com/w/"
 
