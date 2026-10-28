@@ -35,6 +35,12 @@ jobs:
           WFM_USER_AGENT: ArcaneAtlas/2.0 (+https://github.com/${{ github.repository }})
         run: python3 scripts/update_prices.py --output site/data/prices.json
 
+      - name: Generate Prime set history snapshot
+        continue-on-error: true
+        env:
+          RELICS_USER_AGENT: ArcaneAtlas/2.2 (+https://github.com/${{ github.repository }})
+        run: python3 scripts/update_prime_sets.py --output site/data/prime-sets.json
+
       - name: Upload static website
         uses: actions/upload-pages-artifact@v5
         with:

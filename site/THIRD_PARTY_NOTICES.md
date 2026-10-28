@@ -12,6 +12,15 @@ Arcane Atlas retrieves its arcane catalog from the [Warframe.market API](https:/
 
 Warframe.market is an independent service. Attribution does not imply permission, sponsorship, or endorsement. Use of its API remains subject to its applicable rules and terms.
 
+## Relics.run — historical Prime set prices
+
+The Prime Sets board uses the dated price-history files published by [Relics.run](https://relics.run/history/) and its item catalog. The site shows historical reported trade and order statistics, not live offers. Relics.run is a separate service and may derive market statistics from other trading services.
+
+- Source: https://relics.run/history/
+- Catalog: https://relics.run/history/item_data/
+
+Attribution does not imply sponsorship or permission to redistribute third-party data. Data access and reuse remain subject to any applicable terms of the source.
+
 ## WFCD / warframe-items — arcane descriptions and acquisition data
 
 Arcane effect descriptions, ranks, acquisition locations, and associated drop information are obtained from the community-maintained [WFCD/warframe-items](https://github.com/WFCD/warframe-items) dataset.

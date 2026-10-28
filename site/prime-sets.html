@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080e17">
+  <meta name="description" content="Browse and sort historical platinum prices for Warframe Prime sets, using daily statistics from Relics.run.">
+  <title>Prime Set Prices — Arcane Atlas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./prime-sets.css">
+  <link rel="icon" type="image/png" href="./favicon.png">
+  <script src="https://www.googletagmanager.com/gtag/js?id=G-MQFQ6QBJ6M" async></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-MQFQ6QBJ6M');
+  </script>
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"58da4a2061cf43a3b5ef30803b7ceabc"}'></script>
+  <script src="./prime-sets.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="Arcane Atlas home">
+        <span class="brand-mark" aria-hidden="true"><span class="brand-glyph">✧</span></span>
+        <span class="brand-type">ARCANE <strong>ATLAS</strong><small>WARFRAME PRICE TRACKER</small></span>
+      </a>
+      <nav class="prime-navigation" aria-label="Price boards">
+        <a href="./">Arcanes</a>
+        <a href="./prime-sets.html" aria-current="page">Prime sets</a>
+      </nav>
+      <a class="prime-source-link" href="https://relics.run/history/" target="_blank" rel="noopener noreferrer">Data: Relics.run ↗</a>
+    </header>
+
+    <main>
+      <section class="prime-hero">
+        <div class="eyebrow"><span class="eyebrow-line"></span> RELICS.RUN · DAILY PRICE HISTORY</div>
+        <h1>Prime Set <span>Prices.</span></h1>
+        <p>Compare daily reported prices for complete Prime sets. Search and sort the whole catalog in one place.</p>
+        <div class="prime-hero-meta">
+          <span id="prime-status" role="status">Loading the published snapshot…</span>
+          <span class="prime-meta-divider"></span>
+          <span><strong id="prime-total">—</strong> sets tracked</span>
+          <span class="prime-meta-divider"></span>
+          <span>Prices in <strong>Platinum</strong></span>
+        </div>
+      </section>
+
+      <section class="market-panel prime-panel" aria-labelledby="prime-heading">
+        <div class="section-head">
+          <div>
+            <h2 id="prime-heading">Prime set price board</h2>
+            <p>Daily historical statistics from Relics.run, not live buy or sell listings.</p>
+          </div>
+          <button id="prime-refresh" class="refresh-button" type="button"><span class="refresh-icon" aria-hidden="true">↻</span> Check for updates</button>
+        </div>
+        <div id="prime-error" class="error-banner" role="alert" hidden></div>
+        <div class="prime-toolbar">
+          <label class="prime-search-label" for="prime-search">SEARCH <input id="prime-search" type="search" autocomplete="off" placeholder="Search Prime sets…"></label>
+          <label class="prime-sort-label" for="prime-sort">SORT BY
+            <select id="prime-sort">
+              <option value="name">Prime Set</option>
+              <option value="medianClosedPrice">Median closed price</option>
+              <option value="volume">Volume</option>
+              <option value="change7dPct">7-day change</option>
+              <option value="vaulted">Vaulted</option>
+            </select>
+          </label>
+          <button id="prime-direction" class="icon-button prime-direction" type="button" aria-label="Reverse sort order" title="Reverse sort order">A–Z</button>
+          <label class="prime-priced-filter"><input id="prime-priced" type="checkbox"> Only with closed prices</label>
+          <div class="prime-vault-filter" role="group" aria-label="Filter by vault status">
+            <label class="prime-priced-filter"><input id="prime-vaulted-only" type="checkbox"> Vaulted only</label>
+            <label class="prime-priced-filter"><input id="prime-unvaulted-only" type="checkbox"> Unvaulted only</label>
+          </div>
+        </div>
+        <div class="prime-table-meta"><span id="prime-count">Loading…</span></div>
+        <p class="prime-data-note" id="prime-data-note" hidden>No closed-order statistics are available for Prime sets in this snapshot.</p>
+        <div class="table-scroll-hint" role="note">↔ Scroll sideways on smaller screens to see all columns.</div>
+        <div class="table-scroller">
+          <table class="price-table prime-table">
+            <thead id="prime-head">
+              <tr>
+                <th scope="col" data-sort="name" aria-sort="ascending"><button type="button" class="prime-sort-header" data-sort="name"><span>Prime Set</span><span class="prime-sort-arrow" aria-hidden="true">↑</span></button></th>
+                <th scope="col" data-sort="medianClosedPrice" aria-sort="none"><button type="button" class="prime-sort-header" data-sort="medianClosedPrice"><span>Median closed price</span><span class="prime-sort-arrow" aria-hidden="true">↕</span></button></th>
+                <th scope="col" data-sort="volume" aria-sort="none"><button type="button" class="prime-sort-header" data-sort="volume"><span>Volume</span><span class="prime-sort-arrow" aria-hidden="true">↕</span></button></th>
+                <th scope="col" data-sort="change7dPct" aria-sort="none"><button type="button" class="prime-sort-header" data-sort="change7dPct"><span>7-day change</span><span class="prime-sort-arrow" aria-hidden="true">↕</span></button></th>
+                <th scope="col" data-sort="vaulted" aria-sort="none"><button type="button" class="prime-sort-header" data-sort="vaulted" title="Yes means no relics for this set are in normal drop tables"><span>Vaulted</span><span class="prime-sort-arrow" aria-hidden="true">↕</span></button></th>
+                <th scope="col">Wiki</th>
+              </tr>
+            </thead>
+            <tbody id="prime-body"><tr><td colspan="6" class="empty-state">Loading Prime sets…</td></tr></tbody>
+          </table>
+        </div>
+        <div class="table-footer"><span id="prime-footer-count">—</span><span>Historical figures from <a href="https://relics.run/history/" target="_blank" rel="noopener noreferrer">Relics.run ↗</a></span></div>
+      </section>
+
+      <section class="prime-explanation" aria-label="Price definitions">
+        <div><strong>How to read the prices</strong><p><b>Median closed price</b> is the median platinum amount in Relics.run's <code>order_type: closed</code> data for each set. <b>Volume</b> is the number of closed orders reported for that source day. <b>7-day change</b> compares the unrounded closed-order median with exactly seven calendar days earlier, expressed as a percentage. Missing figures show —; open buy and sell orders are not included.</p></div>
+        <div><strong>About the source and vault status</strong><p>Relics.run publishes dated market-history files. The date above the table refers to the source day, not the time you opened this page. Prices are indicative, not guaranteed executable trades. <b>Vaulted: Yes</b> means the <a href="https://wiki.warframe.com/w/Prime_Vault" target="_blank" rel="noopener noreferrer">Warframe Wiki</a> reports no relics for that set in normal drop tables. Special sources, owned relics and trading may still be available. Vault status is checked separately from prices; unavailable status shows —. <span id="prime-vault-checked"></span></p></div>
+      </section>
+    </main>
+    <footer><span><span class="footer-mark">✧</span> ARCANE ATLAS <span class="footer-sep">/</span> A community-made trading dashboard</span><span>Not affiliated with Digital Extremes or Relics.run · <a href="https://relics.run/history/" target="_blank" rel="noopener noreferrer">Prime price source: Relics.run</a> · Warframe is a trademark of Digital Extremes.</span></footer>
+  </div>
+</body>
+</html>

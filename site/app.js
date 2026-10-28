@@ -4,7 +4,7 @@
   const els = {
     search: $('search'), sort: $('sort'), direction: $('sort-direction'),
     priced: $('priced-only'), sources: $('source-tooltips'), favorites: $('favorites-only'),
-    refresh: $('refresh-button'), export: $('export-button'), body: $('table-body'),
+    refresh: $('refresh-button'), body: $('table-body'),
     head: $('table-head'), count: $('result-count'), bottomCount: $('bottom-count'),
     progressArea: $('progress-area'), progressLabel: $('progress-label'), progressCount: $('progress-count'),
     progressBar: $('progress-bar'), error: $('error-banner'), heroStatus: $('hero-status'),
@@ -327,8 +327,6 @@
     els.count.textContent = `${matches.length.toLocaleString()} arcane${matches.length === 1 ? '' : 's'} shown · ${state.items.length.toLocaleString()} tracked`;
     els.bottomCount.textContent = `Showing ${matches.length.toLocaleString()} of ${state.items.length.toLocaleString()} arcanes`;
     els.statTotal.textContent = state.items.length ? state.items.length.toLocaleString() : '—';
-    const ready = !!state.items.length;
-    els.export.disabled = !ready;
     els.refresh.disabled = state.active;
     els.refresh.classList.toggle('refreshing', state.active);
     updateProgress();
@@ -464,7 +462,6 @@
   els.sort.addEventListener('change', () => setSort(els.sort.value));
   els.direction.addEventListener('click', () => { state.direction = state.direction === 'asc' ? 'desc' : 'asc'; updateDirection(); scheduleRender(); });
   els.refresh.addEventListener('click', connect);
-  els.export.addEventListener('click', exportCSV);
   els.favorites.addEventListener('click', () => {
     state.favoritesOnly = !state.favoritesOnly;
     els.favorites.classList.toggle('active', state.favoritesOnly);
