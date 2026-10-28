@@ -19,9 +19,9 @@ import urllib.request
 HISTORY_ROOT = "https://relics.run/history/"
 CATALOG_URL = HISTORY_ROOT + "item_data/item_ids.json"
 DEFAULT_OUTPUT = Path(__file__).resolve().parents[1] / "site/data/prime-sets.json"
-DEFAULT_REUSE = "https://saerdev.github.io/Arcane-Atlas/data/prime-sets.json"
+DEFAULT_REUSE = "https://saerdev.github.io/Tenno-Ticker/data/prime-sets.json"
 USER_AGENT = os.environ.get(
-    "RELICS_USER_AGENT", "ArcaneAtlas/2.2 (+https://github.com/Saerdev/Arcane-Atlas)"
+    "RELICS_USER_AGENT", "TennoTicker/1.0 (+https://github.com/Saerdev/Tenno-Ticker)"
 )
 DATE_PATTERN = re.compile(r'href=["\']price_history_(\d{4}-\d{2}-\d{2})\.json["\']')
 

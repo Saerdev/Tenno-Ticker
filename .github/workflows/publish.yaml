@@ -4,16 +4,15 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
-  # Trigger externally via cron-job.org once hourly (configure in cron-job.org).
-  # No GitHub Actions schedule is enabled to avoid double refreshes.
+  # cron-job.org calls workflow_dispatch hourly. No GitHub Actions schedule.
 
 permissions:
-  contents: write # keep a dormant public repo active so GitHub does not disable scheduled refreshes
+  contents: read
   pages: write
   id-token: write
 
 concurrency:
-  group: arcane-atlas-pages
+  group: tenno-ticker-pages
   cancel-in-progress: false
 
 jobs:
@@ -30,15 +29,21 @@ jobs:
       - name: Set up GitHub Pages
         uses: actions/configure-pages@v6
 
-      - name: Generate hourly closed-order statistics snapshot
+      - name: Generate hourly Arcane details snapshot
         env:
-          WFM_USER_AGENT: ArcaneAtlas/2.0 (+https://github.com/${{ github.repository }})
+          WFM_USER_AGENT: TennoTicker/1.0 (+https://github.com/${{ github.repository }})
         run: python3 scripts/update_prices.py --output site/data/prices.json
 
-      - name: Generate Prime set history snapshot
+      - name: Generate daily Mod and Arcane closed-order price snapshots
         continue-on-error: true
         env:
-          RELICS_USER_AGENT: ArcaneAtlas/2.2 (+https://github.com/${{ github.repository }})
+          RELICS_USER_AGENT: TennoTicker/1.0 (+https://github.com/${{ github.repository }})
+        run: python3 scripts/update_mods.py --output site/data/mods.json --arcane-output site/data/arcane-daily.json
+
+      - name: Generate daily Prime set history snapshot
+        continue-on-error: true
+        env:
+          RELICS_USER_AGENT: TennoTicker/1.0 (+https://github.com/${{ github.repository }})
         run: python3 scripts/update_prime_sets.py --output site/data/prime-sets.json
 
       - name: Upload static website

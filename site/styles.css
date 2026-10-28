@@ -49,6 +49,24 @@ footer a{color:#b1dbd0}
 
 .hero-meta #stat-total{font-family:var(--font-head);color:var(--teal);font-size:17px;font-weight:700;vertical-align:-1px}
 
+/* The Arcane board uses the same balanced five-column layout as Prime Sets. */
+.price-table.arcane-table{min-width:920px;table-layout:fixed}
+.price-table.arcane-table th,.price-table.arcane-table td{width:20%;text-align:center}
+.price-table.arcane-table th:first-child,.price-table.arcane-table td:first-child{min-width:0;text-align:left;padding-left:28px}
+.price-table.arcane-table th:last-child,.price-table.arcane-table td:last-child{padding-right:28px}
+.price-table.arcane-table td:first-child{white-space:normal}
+.arcane-table .item-cell{min-width:0}
+.arcane-table .item-details{min-width:0}
+.arcane-table .item-name{white-space:normal}
+.arcane-table .action-group{justify-content:center}
+.arcane-table .action-cell{text-align:center}
+.arcane-table .favorite-btn{font-size:21px}
+.price-table.arcane-table th[data-sort="none"]{cursor:default}
+.price-table.arcane-table th .th-unit{white-space:normal}
+.topbar-right .prime-navigation{margin:0}
+@media(max-width:900px){.arcane-table+.table-scroll-hint{display:block}}
+@media(max-width:780px){.price-table.arcane-table th:first-child,.price-table.arcane-table td:first-child{padding-left:15px}.price-table.arcane-table th:last-child,.price-table.arcane-table td:last-child{padding-right:15px}}
+
 /* Keep the Actions heading centered over the star, Market, and Wiki buttons. */
 .price-table th:last-child,
 .price-table td:last-child {

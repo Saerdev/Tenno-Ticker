@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080e17">
+  <meta name="description" content="Track daily reported closed-order prices, volume, and 7-day change for tradable Warframe mods.">
+  <title>Mod Prices — Tenno Ticker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./prime-sets.css">
+  <link rel="stylesheet" href="./mods.css">
+  <link rel="icon" type="image/png" href="./favicon.png">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-MQFQ6QBJ6M"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-MQFQ6QBJ6M');</script>
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"58da4a2061cf43a3b5ef30803b7ceabc"}'></script>
+  <script src="./mods.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="Tenno Ticker home">
+        <span class="brand-mark" aria-hidden="true"><span class="brand-glyph">✧</span></span>
+        <span class="brand-type">TENNO <strong>TICKER</strong><small>WARFRAME PRICE TRACKER</small></span>
+      </a>
+      <nav class="prime-navigation" aria-label="Price boards">
+        <a href="./">Arcanes</a>
+        <a href="./prime-sets.html">Prime sets</a>
+        <a href="./mods.html" aria-current="page">Mods</a>
+      </nav>
+      <a class="prime-source-link" href="https://relics.run/history/" target="_blank" rel="noopener noreferrer">Data: Relics.run ↗</a>
+    </header>
+    <main>
+      <section class="prime-hero">
+        <div class="eyebrow"><span class="eyebrow-line"></span> RELICS.RUN · DAILY PRICE HISTORY</div>
+        <h1>Mod <span>Prices.</span></h1>
+        <p>Find tradable mods, compare Rank 0 and Max Rank values, and hover over a mod for documented acquisition sources.</p>
+        <div class="prime-hero-meta">
+          <span id="mod-status" role="status">Loading the published snapshot…</span>
+          <span class="prime-meta-divider"></span><span><strong id="mod-total">—</strong> mods tracked</span>
+          <span class="prime-meta-divider"></span><span>Prices in <strong>Platinum</strong></span>
+        </div>
+      </section>
+      <section class="market-panel prime-panel mod-panel" aria-labelledby="mod-heading">
+        <div class="section-head">
+          <div><h2 id="mod-heading">Mod price board</h2><p>Daily closed-order statistics. Hover over a mod name to see where it drops or is sold.</p></div>
+          <button id="mod-refresh" class="refresh-button" type="button"><span class="refresh-icon" aria-hidden="true">↻</span> Check for updates</button>
+        </div>
+        <div id="mod-error" class="error-banner" role="alert" hidden></div>
+        <div class="prime-toolbar">
+          <label class="prime-search-label" for="mod-search">SEARCH <input id="mod-search" type="search" autocomplete="off" placeholder="Search mods…"></label>
+          <label class="prime-sort-label" for="mod-sort">SORT BY
+            <select id="mod-sort">
+              <option value="name">Mod</option><option value="medianClosedPrice">Median closed price</option>
+              <option value="volume">Volume</option><option value="change7dPct">7-day change</option>
+            </select>
+          </label>
+          <button id="mod-direction" class="icon-button prime-direction" type="button" aria-label="Reverse sort order">A–Z</button>
+          <fieldset class="rank-pick"><legend>MOD RANK</legend>
+            <label><input type="radio" name="mod-rank" value="rank0" checked> Rank 0</label>
+            <label><input type="radio" name="mod-rank" value="rankMax"> Max rank</label>
+          </fieldset>
+          <label class="prime-priced-filter"><input id="mod-priced" type="checkbox"> Only with closed prices</label>
+        </div>
+        <div class="prime-table-meta"><span id="mod-count">Loading…</span><span>Hover or focus a mod name for sources</span></div>
+        <div class="table-scroll-hint" role="note">↔ Scroll sideways on smaller screens to see all columns.</div>
+        <div class="table-scroller">
+          <table class="price-table prime-table mod-table">
+            <thead id="mod-head"><tr>
+              <th scope="col" data-sort="name" aria-sort="ascending"><button type="button" class="prime-sort-header" data-sort="name"><span>Mod</span><span class="prime-sort-arrow" aria-hidden="true">↑</span></button></th>
+              <th scope="col" data-sort="medianClosedPrice" aria-sort="none"><button type="button" class="prime-sort-header" data-sort="medianClosedPrice"><span>Median closed price</span><span class="prime-sort-arrow" aria-hidden="true">↕</span></button></th>
+              <th scope="col" data-sort="volume" aria-sort="none"><button type="button" class="prime-sort-header" data-sort="volume"><span>Volume</span><span class="prime-sort-arrow" aria-hidden="true">↕</span></button></th>
+              <th scope="col" data-sort="change7dPct" aria-sort="none"><button type="button" class="prime-sort-header" data-sort="change7dPct"><span>7-day change</span><span class="prime-sort-arrow" aria-hidden="true">↕</span></button></th>
+              <th scope="col">Wiki</th>
+            </tr></thead>
+            <tbody id="mod-body"><tr><td colspan="5" class="empty-state">Loading mods…</td></tr></tbody>
+          </table>
+        </div>
+        <div class="mod-more-wrap"><button type="button" id="mod-more" hidden>Show more mods ↓</button></div>
+        <div class="table-footer"><span id="mod-footer-count">—</span><span>Historical figures from <a href="https://relics.run/history/" target="_blank" rel="noopener noreferrer">Relics.run ↗</a></span></div>
+      </section>
+      <section class="prime-explanation" aria-label="Mod price definitions">
+        <div><strong>How to read prices</strong><p><b>Median closed price</b> and <b>Volume</b> use Relics.run's reported <code>order_type: closed</code> records for the selected rank. Prices are rounded down to whole Platinum. <b>7-day change</b> compares unrounded medians to exactly seven days earlier. No price or trade record is shown as —.</p></div>
+        <div><strong>Acquisition notes</strong><p>Acquisition locations and chances are drawn from <a href="https://github.com/WFCD/warframe-items" target="_blank" rel="noopener noreferrer">WFCD's mod catalog</a>. Some Mods, such as those sold by rotating vendors or earned through special activities, have no documented drop record in that catalog; their tooltips link to the Wiki. Listings are market items, not Rivens, relics, or weapon parts.</p></div>
+      </section>
+    </main>
+    <footer><span><span class="footer-mark">✧</span> TENNO TICKER <span class="footer-sep">/</span> A community-made trading dashboard</span><span>Not affiliated with Digital Extremes, Warframe.market, Relics.run or WFCD · Warframe is a trademark of Digital Extremes.</span></footer>
+  </div>
+  <div id="mod-tooltip" class="acquisition-tooltip" role="tooltip" hidden></div>
+</body>
+</html>

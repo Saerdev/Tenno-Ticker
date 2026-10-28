@@ -57,3 +57,14 @@
 @media(max-width:540px){.prime-navigation{gap:0}.prime-navigation a{padding:7px 8px;font-size:12px}.prime-sort-label{flex:1}.prime-sort-label select{width:100%}.prime-toolbar{gap:9px}}
 @media(max-width:900px){.prime-panel .table-scroll-hint{display:block}}
 @media(max-width:780px){.prime-panel .prime-toolbar{padding:16px 15px 14px}.prime-panel .prime-table-meta{padding:12px 15px}.prime-panel .prime-data-note{margin-left:15px;margin-right:15px}}
+
+/* Arcane board follows the same equal-column treatment, minus Vaulted. */
+.price-table.prime-table.arcane-table{min-width:920px;table-layout:fixed}
+.price-table.prime-table.arcane-table th,.price-table.prime-table.arcane-table td{width:20%;text-align:center}
+.price-table.prime-table.arcane-table th:first-child,.price-table.prime-table.arcane-table td:first-child{text-align:left;min-width:0}
+.price-table.prime-table.arcane-table th:last-child,.price-table.prime-table.arcane-table td:last-child{padding-right:28px}
+.price-table.prime-table.arcane-table .item-cell{min-width:0}
+.price-table.prime-table.arcane-table .item-name{white-space:normal}
+.topbar-right{gap:12px}
+@media(max-width:980px){.topbar-right>.topbar-link{display:none}}
+@media(max-width:780px){.topbar-right{gap:0}.price-table.prime-table.arcane-table th:last-child,.price-table.prime-table.arcane-table td:last-child{padding-right:15px}}
