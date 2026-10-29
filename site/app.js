@@ -10,6 +10,7 @@
     progressBar: $('progress-bar'), error: $('error-banner'), heroStatus: $('hero-status'),
     statTotal: $('stat-total'),
     tooltip: $('arcane-tooltip'),
+    syndicates: $('arcane-syndicates'), clearSyndicates: $('arcane-syndicate-clear'),
   };
 
   const state = {
@@ -18,7 +19,11 @@
     favoritesOnly: false, sort: 'name', direction: 'asc',
     active: false, processed: 0, failed: 0, completedAt: 0, volumeUpdatedAt: 0,
     renderPending: false, loadingCatalog: true, fetchSequence: 0, initialLoad: true, catalog: new Map(), tooltipTrigger: null,
+    selectedSyndicateCount: 0,
   };
+  const selectedSyndicates = () => new Set(
+    [...els.syndicates.querySelectorAll('input[name="arcane-syndicate"]:checked')].map((box) => box.value)
+  );
 
   // Vendor purchases are stored separately from price snapshots, so local preview
   // data and older published snapshots still show up-to-date shop sources.
@@ -137,12 +142,16 @@
   }
   function visibleItems() {
     const q = els.search.value.trim().toLocaleLowerCase();
+    const selected = selectedSyndicates();
     return state.items.filter((item) => {
       if (q && !item.name.toLocaleLowerCase().includes(q)) return false;
       if (state.favoritesOnly && !state.favorites.has(item.slug)) return false;
       if (els.priced.checked) {
         if (getStats(item, state.view)?.medianClosedPrice == null) return false;
       }
+      // Direct shop offers only: a drop source does not imply a standing purchase.
+      if (selected.size && !(Array.isArray(item.vendorSources) &&
+          item.vendorSources.some((offer) => selected.has(offer.faction)))) return false;
       return true;
     }).sort((a, b) => {
       const va = sortVal(a), vb = sortVal(b);
@@ -291,6 +300,7 @@
     if (matches.length === 0) {
       const message = state.loadingCatalog ? 'Loading the published arcane price snapshot…'
         : state.favoritesOnly && !state.favorites.size ? 'Your watchlist is empty. Star an arcane to save it here.'
+        : selectedSyndicates().size ? 'No documented purchases from these vendors match your current filters.'
         : 'No arcanes match your current filters.';
       els.body.innerHTML = `<tr><td colspan="${colSpan}" class="empty-state">${esc(message)}</td></tr>`;
     } else {
@@ -299,6 +309,7 @@
     els.count.textContent = `${matches.length.toLocaleString()} arcane${matches.length === 1 ? '' : 's'} shown · ${state.items.length.toLocaleString()} tracked`;
     els.bottomCount.textContent = `Showing ${matches.length.toLocaleString()} of ${state.items.length.toLocaleString()} arcanes`;
     els.statTotal.textContent = state.items.length ? state.items.length.toLocaleString() : '—';
+    els.clearSyndicates.hidden = selectedSyndicates().size === 0;
     els.refresh.disabled = state.active;
     els.refresh.classList.toggle('refreshing', state.active);
     updateProgress();
@@ -423,6 +434,14 @@
     els.direction.title = `Current order: ${state.direction === 'asc' ? 'ascending' : 'descending'}. Click to reverse.`;
     els.direction.setAttribute('aria-label', els.direction.title);
   }
+  function setRankView(view) {
+    state.view = view;
+    document.querySelectorAll('[data-view]').forEach((element) => {
+      const active = element.dataset.view === view;
+      element.classList.toggle('active', active);
+      element.setAttribute('aria-pressed', String(active));
+    });
+  }
   function csvValue(value) { return `"${String(value ?? '').replaceAll('"', '""')}"`; }
   function exportCSV() {
     const headers = ['Arcane', 'Max Rank', 'Rank 0 Daily Median (pt)', 'Rank 0 Daily Volume', 'Rank 0 7d Change (%)', 'Max Rank Daily Median (pt)', 'Max Rank Daily Volume', 'Max Rank 7d Change (%)', 'Daily Source Date', 'Market URL', 'Recorded Drop Sources', 'Wiki URL', 'Rank 0 Effect', 'Max Rank Effect'];
@@ -447,6 +466,24 @@
 
   els.search.addEventListener('input', scheduleRender);
   els.priced.addEventListener('change', scheduleRender);
+  els.syndicates.addEventListener('change', (event) => {
+    if (!event.target.matches('input[name="arcane-syndicate"]')) return;
+    const count = selectedSyndicates().size;
+    if (count > 0 && state.selectedSyndicateCount === 0) {
+      setRankView('rank0');
+      state.sort = 'medianClosedPrice';
+      state.direction = 'desc';
+      els.sort.value = state.sort;
+      updateDirection();
+    }
+    state.selectedSyndicateCount = count;
+    scheduleRender();
+  });
+  els.clearSyndicates.addEventListener('click', () => {
+    els.syndicates.querySelectorAll('input[name="arcane-syndicate"]').forEach((box) => { box.checked = false; });
+    state.selectedSyndicateCount = 0;
+    scheduleRender();
+  });
   els.sources.addEventListener('change', () => {
     if (!els.sources.checked) hideTooltip();
     try { localStorage.setItem('arcane-atlas-source-tooltips', els.sources.checked ? 'on' : 'off'); } catch {}
@@ -462,11 +499,7 @@
     scheduleRender();
   });
   document.querySelectorAll('[data-view]').forEach((button) => button.addEventListener('click', () => {
-    state.view = button.dataset.view;
-    document.querySelectorAll('[data-view]').forEach((element) => {
-      element.classList.toggle('active', element === button);
-      element.setAttribute('aria-pressed', String(element === button));
-    });
+    setRankView(button.dataset.view);
     scheduleRender();
   }));
   els.body.addEventListener('pointerover', (event) => {
