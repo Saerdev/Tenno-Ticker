@@ -10,13 +10,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./styles.css?v=tooltip-no-scroll-2">
-  <link rel="stylesheet" href="./prime-sets.css?v=tooltip-no-scroll-2">
+  <link rel="stylesheet" href="./prime-sets.css?v=watchlists-2">
   <link rel="stylesheet" href="./mods.css?v=syndicate-vendors-1">
   <link rel="icon" type="image/png" href="./favicon.png">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-MQFQ6QBJ6M"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-MQFQ6QBJ6M');</script>
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"58da4a2061cf43a3b5ef30803b7ceabc"}'></script>
-  <script src="./mods.js?v=syndicate-vendors-1" defer></script>
+  <script src="./mods.js?v=watchlists-1" defer></script>
 </head>
 <body>
   <div class="app-shell">
@@ -68,6 +68,7 @@
             <label><input type="radio" name="mod-rank" value="rankMax"> Max rank</label>
           </fieldset>
           <label class="prime-priced-filter"><input id="mod-priced" type="checkbox"> Only with closed prices</label>
+          <button id="mod-favorites-only" class="favorites-filter" type="button" aria-pressed="false"><span>☆</span> Watchlist</button>
         </div>
         <fieldset id="mod-syndicates" class="mod-syndicate-filter" aria-describedby="mod-syndicate-help">
           <legend>SYNDICATE VENDORS</legend>
@@ -108,7 +109,7 @@
               <th scope="col" data-sort="medianClosedPrice" aria-sort="none"><button type="button" class="prime-sort-header" data-sort="medianClosedPrice"><span>Median closed price</span><span class="prime-sort-arrow" aria-hidden="true">↕</span></button></th>
               <th scope="col" data-sort="volume" aria-sort="none"><button type="button" class="prime-sort-header" data-sort="volume"><span>Volume</span><span class="prime-sort-arrow" aria-hidden="true">↕</span></button></th>
               <th scope="col" data-sort="change7dPct" aria-sort="none"><button type="button" class="prime-sort-header" data-sort="change7dPct"><span>7-day change</span><span class="prime-sort-arrow" aria-hidden="true">↕</span></button></th>
-              <th scope="col">Wiki</th>
+              <th scope="col">Actions</th>
             </tr></thead>
             <tbody id="mod-body"><tr><td colspan="5" class="empty-state">Loading mods…</td></tr></tbody>
           </table>

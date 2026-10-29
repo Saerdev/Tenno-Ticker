@@ -22,6 +22,9 @@
 .prime-priced-filter{display:flex;align-items:center;gap:9px;min-height:42px;font-size:12px;color:var(--muted);white-space:nowrap}
 .prime-priced-filter input{accent-color:var(--teal);width:16px;height:16px}
 .prime-vault-filter{display:flex;align-items:center;flex-wrap:wrap;column-gap:14px;row-gap:0}
+/* Use the same unboxed watchlist appearance as the Arcane toolbar. */
+.prime-panel .favorites-filter{min-height:42px}
+.prime-panel .favorite-btn:focus-visible{outline:2px solid var(--teal);outline-offset:2px;border-radius:4px}
 .prime-table-meta{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 28px;color:var(--muted);font-size:12px;border-top:1px solid var(--border)}
 .price-table.prime-table{min-width:1080px;table-layout:fixed}
 .price-table.prime-table th,.price-table.prime-table td{width:16.6667%;text-align:center}

@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./styles.css?v=tooltip-no-scroll-2">
-  <link rel="stylesheet" href="./prime-sets.css?v=tooltip-no-scroll-2">
+  <link rel="stylesheet" href="./prime-sets.css?v=watchlists-2">
   <link rel="icon" type="image/png" href="./favicon.png">
   <script src="https://www.googletagmanager.com/gtag/js?id=G-MQFQ6QBJ6M" async></script>
   <script>
@@ -20,7 +20,7 @@
     gtag('config', 'G-MQFQ6QBJ6M');
   </script>
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"58da4a2061cf43a3b5ef30803b7ceabc"}'></script>
-  <script src="./prime-sets.js" defer></script>
+  <script src="./prime-sets.js?v=watchlists-1" defer></script>
 </head>
 <body>
   <div class="app-shell">
@@ -78,6 +78,7 @@
           </label>
           <button id="prime-direction" class="icon-button prime-direction" type="button" aria-label="Reverse sort order" title="Reverse sort order">A–Z</button>
           <label class="prime-priced-filter"><input id="prime-priced" type="checkbox"> Only with closed prices</label>
+          <button id="prime-favorites-only" class="favorites-filter" type="button" aria-pressed="false"><span>☆</span> Watchlist</button>
           <div class="prime-vault-filter" role="group" aria-label="Filter by vault status">
             <label class="prime-priced-filter"><input id="prime-vaulted-only" type="checkbox"> Vaulted only</label>
             <label class="prime-priced-filter"><input id="prime-unvaulted-only" type="checkbox"> Unvaulted only</label>
@@ -95,7 +96,7 @@
                 <th scope="col" data-sort="volume" aria-sort="none"><button type="button" class="prime-sort-header" data-sort="volume"><span>Volume</span><span class="prime-sort-arrow" aria-hidden="true">↕</span></button></th>
                 <th scope="col" data-sort="change7dPct" aria-sort="none"><button type="button" class="prime-sort-header" data-sort="change7dPct"><span>7-day change</span><span class="prime-sort-arrow" aria-hidden="true">↕</span></button></th>
                 <th scope="col" data-sort="vaulted" aria-sort="none"><button type="button" class="prime-sort-header" data-sort="vaulted" title="Yes means no relics for this set are in normal drop tables"><span>Vaulted</span><span class="prime-sort-arrow" aria-hidden="true">↕</span></button></th>
-                <th scope="col">Wiki</th>
+                <th scope="col">Actions</th>
               </tr>
             </thead>
             <tbody id="prime-body"><tr><td colspan="6" class="empty-state">Loading Prime sets…</td></tr></tbody>

@@ -3,7 +3,7 @@
   const $ = (id) => document.getElementById(id);
   const els = {
     search: $('search'), sort: $('sort'), direction: $('sort-direction'),
-    priced: $('priced-only'), sources: $('source-tooltips'), favorites: $('favorites-only'),
+    priced: $('priced-only'), favorites: $('favorites-only'),
     refresh: $('refresh-button'), body: $('table-body'),
     head: $('table-head'), count: $('result-count'), bottomCount: $('bottom-count'),
     progressArea: $('progress-area'), progressLabel: $('progress-label'), progressCount: $('progress-count'),
@@ -51,12 +51,6 @@
       return Array.isArray(localOffers) ? { ...item, vendorSources: localOffers } : item;
     });
   }
-
-  function readSourcePreference() {
-    try { return localStorage.getItem('arcane-atlas-source-tooltips') !== 'off'; }
-    catch { return true; }
-  }
-  els.sources.checked = readSourcePreference();
 
   function readFavorites() {
     try { return new Set(JSON.parse(localStorage.getItem('arcane-atlas-favorites') || '[]')); }
@@ -237,7 +231,7 @@
     els.tooltip.hidden = true;
   }
   function showTooltip(trigger) {
-    if (!els.sources.checked || state.tooltipTrigger === trigger) return;
+    if (state.tooltipTrigger === trigger) return;
     const item = state.catalog.get(trigger.dataset.acquisition);
     if (!item) return;
     hideTooltip();
@@ -483,10 +477,6 @@
     els.syndicates.querySelectorAll('input[name="arcane-syndicate"]').forEach((box) => { box.checked = false; });
     state.selectedSyndicateCount = 0;
     scheduleRender();
-  });
-  els.sources.addEventListener('change', () => {
-    if (!els.sources.checked) hideTooltip();
-    try { localStorage.setItem('arcane-atlas-source-tooltips', els.sources.checked ? 'on' : 'off'); } catch {}
   });
   els.sort.addEventListener('change', () => setSort(els.sort.value));
   els.direction.addEventListener('click', () => { state.direction = state.direction === 'asc' ? 'desc' : 'asc'; updateDirection(); scheduleRender(); });

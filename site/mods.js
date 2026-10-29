@@ -4,15 +4,32 @@
   const els = {
     body: $('mod-body'), head: $('mod-head'), search: $('mod-search'), sort: $('mod-sort'),
     direction: $('mod-direction'), priced: $('mod-priced'), refresh: $('mod-refresh'),
+    favorites: $('mod-favorites-only'),
     count: $('mod-count'), total: $('mod-total'), footer: $('mod-footer-count'),
     status: $('mod-status'), error: $('mod-error'), more: $('mod-more'), tooltip: $('mod-tooltip'),
     syndicates: $('mod-syndicates'), clearSyndicates: $('mod-syndicate-clear'),
   };
+  const FAVORITES_KEY = 'tenno-ticker-mod-watchlist';
+  function readFavorites() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]');
+      return new Set(Array.isArray(saved) ? saved.filter((slug) => typeof slug === 'string') : []);
+    } catch { return new Set(); }
+  }
   const state = {
     items: [], bySlug: new Map(), rank: 'rank0', sort: 'name', direction: 'asc',
     sourceDate: null, comparisonDate: null, loading: false, limit: 200, tooltipSlug: null,
     syndicatesBySlug: new Map(), selectedSyndicateCount: 0,
+    favorites: readFavorites(), favoritesOnly: false,
   };
+  function persistFavorites() {
+    try { localStorage.setItem(FAVORITES_KEY, JSON.stringify([...state.favorites])); } catch {}
+  }
+  function updateFavoritesFilter() {
+    els.favorites.classList.toggle('active', state.favoritesOnly);
+    els.favorites.setAttribute('aria-pressed', String(state.favoritesOnly));
+    els.favorites.querySelector('span').textContent = state.favoritesOnly ? '★' : '☆';
+  }
   const syndicateNames = [
     'Steel Meridian', 'Arbiters of Hexis', 'Cephalon Suda', 'The Perrin Sequence',
     'Red Veil', 'New Loka', 'Cephalon Simaris', 'Conclave', 'Ostron',
@@ -57,7 +74,8 @@
   function visible() {
     const query = els.search.value.trim().toLowerCase();
     const selected = selectedSyndicates();
-    return state.items.filter((item) => (!query || item.name.toLowerCase().includes(query))
+    return state.items.filter((item) => (!state.favoritesOnly || state.favorites.has(item.slug))
+      && (!query || item.name.toLowerCase().includes(query))
       && (!els.priced.checked || num(rankStats(item).medianClosedPrice) !== null)
       && (!selected.size || [...(state.syndicatesBySlug.get(item.slug) || [])].some((name) => selected.has(name))))
       .sort((a, b) => {
@@ -73,15 +91,16 @@
   function row(item) {
     const s = rankStats(item);
     const wiki = safeWiki(item.wikiUrl, item.name);
+    const favorite = state.favorites.has(item.slug);
     return `<tr><td><a class="mod-name" data-mod="${esc(item.slug)}" href="https://warframe.market/items/${encodeURIComponent(item.slug)}" target="_blank" rel="noopener noreferrer" aria-describedby="mod-tooltip">${esc(item.name)}</a><span class="mod-name-sub">MAX RANK ${esc(item.maxRank)}</span></td>
       <td>${shownPrice(s.medianClosedPrice)}</td><td>${shownVolume(s.volume)}</td><td>${shownChange(s.change7dPct)}</td>
-      <td class="action-cell"><div class="action-group"><a class="wiki-link" href="${esc(wiki)}" target="_blank" rel="noopener noreferrer" aria-label="View ${esc(item.name)} on the Warframe Wiki">Wiki ↗</a></div></td></tr>`;
+      <td class="action-cell"><div class="action-group"><button type="button" class="favorite-btn${favorite ? ' active' : ''}" data-favorite="${esc(item.slug)}" aria-label="${favorite ? 'Remove from' : 'Add to'} watchlist: ${esc(item.name)}" aria-pressed="${favorite}">${favorite ? '★' : '☆'}</button><a class="wiki-link" href="${esc(wiki)}" target="_blank" rel="noopener noreferrer" aria-label="View ${esc(item.name)} on the Warframe Wiki">Wiki ↗</a></div></td></tr>`;
   }
   function render() {
     hideTooltip();
     const items = visible();
     els.body.innerHTML = items.length ? items.slice(0, state.limit).map(row).join('') :
-      '<tr><td colspan="5" class="empty-state">No mods match these filters.</td></tr>';
+      `<tr><td colspan="5" class="empty-state">${state.favoritesOnly && !state.favorites.size ? 'Your watchlist is empty. Star a mod to save it here.' : 'No mods match these filters.'}</td></tr>`;
     els.count.textContent = `${items.length.toLocaleString()} of ${state.items.length.toLocaleString()} mods match`;
     els.footer.textContent = `Showing ${Math.min(items.length, state.limit).toLocaleString()} of ${items.length.toLocaleString()} matching mods`;
     els.total.textContent = state.items.length.toLocaleString();
@@ -182,6 +201,20 @@
   }
   els.search.addEventListener('input', resetRender);
   els.priced.addEventListener('change', resetRender);
+  els.favorites.addEventListener('click', () => {
+    state.favoritesOnly = !state.favoritesOnly;
+    updateFavoritesFilter();
+    resetRender();
+  });
+  els.body.addEventListener('click', (event) => {
+    const button = event.target.closest('button[data-favorite]');
+    if (!button) return;
+    const slug = button.dataset.favorite;
+    if (state.favorites.has(slug)) state.favorites.delete(slug);
+    else state.favorites.add(slug);
+    persistFavorites();
+    resetRender();
+  });
   els.syndicates.addEventListener('change', (e) => {
     if (!e.target.matches('input[name="mod-syndicate"]')) return;
     const count = selectedSyndicates().size;

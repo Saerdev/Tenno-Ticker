@@ -5,11 +5,30 @@
     body: $('prime-body'), head: $('prime-head'), search: $('prime-search'), sort: $('prime-sort'),
     direction: $('prime-direction'), priced: $('prime-priced'), refresh: $('prime-refresh'),
     vaultedOnly: $('prime-vaulted-only'), unvaultedOnly: $('prime-unvaulted-only'),
+    favorites: $('prime-favorites-only'),
     count: $('prime-count'), total: $('prime-total'),
     footerCount: $('prime-footer-count'), status: $('prime-status'),
     error: $('prime-error'), tradeNote: $('prime-data-note'), vaultChecked: $('prime-vault-checked'),
   };
-  const state = { sets: [], sourceDate: null, comparisonDate: null, sort: 'name', direction: 'asc', loading: false };
+  const FAVORITES_KEY = 'tenno-ticker-prime-watchlist';
+  function readFavorites() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]');
+      return new Set(Array.isArray(saved) ? saved.filter((name) => typeof name === 'string') : []);
+    } catch { return new Set(); }
+  }
+  const state = {
+    sets: [], sourceDate: null, comparisonDate: null, sort: 'name', direction: 'asc', loading: false,
+    favorites: readFavorites(), favoritesOnly: false,
+  };
+  function persistFavorites() {
+    try { localStorage.setItem(FAVORITES_KEY, JSON.stringify([...state.favorites])); } catch {}
+  }
+  function updateFavoritesFilter() {
+    els.favorites.classList.toggle('active', state.favoritesOnly);
+    els.favorites.setAttribute('aria-pressed', String(state.favoritesOnly));
+    els.favorites.querySelector('span').textContent = state.favoritesOnly ? '★' : '☆';
+  }
 
   function escapeHtml(value) {
     return String(value ?? '').replace(/[&<>"']/g, (char) =>
@@ -62,6 +81,7 @@
     const field = state.sort;
     const vaultFilter = els.vaultedOnly.checked ? true : els.unvaultedOnly.checked ? false : null;
     return state.sets.filter((item) =>
+      (!state.favoritesOnly || state.favorites.has(item.name)) &&
       (!query || item.name.toLocaleLowerCase().includes(query)) &&
       (!els.priced.checked || number(item.medianClosedPrice) !== null) &&
       (vaultFilter === null || item.vaulted === vaultFilter)
@@ -81,17 +101,18 @@
   }
   function row(item) {
     const itemTitle = item.name.replace(/\s+Set$/i, '');
+    const favorite = state.favorites.has(item.name);
     return `<tr><td><a class="prime-market-link" href="${marketUrl(item.name)}" target="_blank" rel="noopener noreferrer" title="View ${escapeHtml(item.name)} on Warframe.market">${escapeHtml(item.name)}</a></td>
       <td>${price(item.medianClosedPrice, 'prime-trade')}</td>
       <td>${volume(item.volume)}</td>
       <td>${change7d(item.change7dPct)}</td>
       <td>${vaulted(item.vaulted)}</td>
-      <td class="action-cell"><div class="action-group"><a class="wiki-link" href="${wikiUrl(item.name)}" target="_blank" rel="noopener noreferrer" aria-label="View ${escapeHtml(itemTitle)} on the Warframe Wiki">Wiki ↗</a></div></td></tr>`;
+      <td class="action-cell"><div class="action-group"><button type="button" class="favorite-btn${favorite ? ' active' : ''}" data-favorite="${escapeHtml(item.name)}" aria-label="${favorite ? 'Remove from' : 'Add to'} watchlist: ${escapeHtml(item.name)}" aria-pressed="${favorite}">${favorite ? '★' : '☆'}</button><a class="wiki-link" href="${wikiUrl(item.name)}" target="_blank" rel="noopener noreferrer" aria-label="View ${escapeHtml(itemTitle)} on the Warframe Wiki">Wiki ↗</a></div></td></tr>`;
   }
   function render() {
     const items = visible();
     els.body.innerHTML = items.length ? items.map(row).join('') :
-      `<tr><td colspan="6" class="empty-state">${state.loading ? 'Loading Prime sets…' : 'No Prime sets match these filters.'}</td></tr>`;
+      `<tr><td colspan="6" class="empty-state">${state.loading ? 'Loading Prime sets…' : state.favoritesOnly && !state.favorites.size ? 'Your watchlist is empty. Star a Prime set to save it here.' : 'No Prime sets match these filters.'}</td></tr>`;
     els.count.textContent = `${items.length.toLocaleString()} of ${state.sets.length.toLocaleString()} sets shown`;
     els.footerCount.textContent = `Showing ${items.length.toLocaleString()} Prime sets`;
     els.total.textContent = state.sets.length ? state.sets.length.toLocaleString() : '—';
@@ -170,6 +191,20 @@
   }
   els.search.addEventListener('input', render);
   els.priced.addEventListener('change', render);
+  els.favorites.addEventListener('click', () => {
+    state.favoritesOnly = !state.favoritesOnly;
+    updateFavoritesFilter();
+    render();
+  });
+  els.body.addEventListener('click', (event) => {
+    const button = event.target.closest('button[data-favorite]');
+    if (!button) return;
+    const name = button.dataset.favorite;
+    if (state.favorites.has(name)) state.favorites.delete(name);
+    else state.favorites.add(name);
+    persistFavorites();
+    render();
+  });
   els.vaultedOnly.addEventListener('change', () => {
     if (els.vaultedOnly.checked) els.unvaultedOnly.checked = false;
     render();
