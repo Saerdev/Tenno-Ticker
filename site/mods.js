@@ -74,10 +74,27 @@
   function tooltipHtml(item) {
     const sources = Array.isArray(item.sources) ? item.sources : [];
     const list = sources.map((s) => `<li><span>${esc(s.location)}</span>${typeof s.chance === 'number' ? '<span class="acquisition-chance">' + esc(s.chance.toLocaleString('en-US', { maximumFractionDigits: 3 })) + '%</span>' : ''}</li>`).join('');
-    const wiki = safeWiki(item.wikiUrl, item.name);
-    return `<div class="acquisition-heading"><span>MOD ACQUISITION</span><strong>${esc(item.name)}</strong></div>
+    const effects = item.effects || {};
+    const effectText = (value) => esc(String(value).replace(/<(?:DT|STAT)_([A-Z0-9_]+)>/g, (_match, code) =>
+      ({ FIRE: 'Heat', FREEZE: 'Cold', ELECTRICITY: 'Electricity', POISON: 'Toxin' }[code] ||
+        code.toLowerCase().replaceAll('_', ' '))));
+    let effectBody;
+    if (typeof effects.range === 'string' && effects.range.trim()) {
+      effectBody = `<p class="mod-effect-text">${effectText(effects.range)}</p>`;
+    } else if (effects.rank0 && effects.rankMax && effects.rank0 !== effects.rankMax) {
+      effectBody = `<div class="mod-effect-variant"><b>RANK 0</b><p class="mod-effect-text">${effectText(effects.rank0)}</p></div>
+        <div class="mod-effect-variant"><b>MAX RANK</b><p class="mod-effect-text">${effectText(effects.rankMax)}</p></div>`;
+    } else if (effects.rank0 || effects.rankMax || effects.description) {
+      effectBody = `<p class="mod-effect-text">${effectText(effects.rank0 || effects.rankMax || effects.description)}</p>`;
+    } else {
+      effectBody = '<p class="acquisition-empty">Effect description unavailable in the mod catalog. Check the Wiki for details.</p>';
+    }
+    return `<div class="acquisition-heading"><span>MOD DETAILS</span><strong>${esc(item.name)}</strong></div>
+      <section class="mod-effect-section"><div class="tooltip-section-heading">WHAT IT DOES <span class="effect-rank">RANK 0 → RANK ${esc(item.maxRank)}</span></div>${effectBody}</section>
+      <section class="mod-source-section"><div class="tooltip-section-heading">ACQUISITION</div>
       ${list ? '<ul class="acquisition-list">' + list + '</ul>' : '<p class="acquisition-empty">No drop or vendor location is documented in the mod catalog for this item. Check the Wiki for acquisition methods.</p>'}
-      <div class="acquisition-footer"><span>Documented sources: ${sources.length}</span><a href="${esc(wiki)}" target="_blank" rel="noopener noreferrer">Open Wiki ↗</a></div>`;
+      </section>
+      <div class="acquisition-footer"><span>Documented sources: ${sources.length}</span></div>`;
   }
   function hideTooltip() {
     state.tooltipSlug = null;
@@ -158,16 +175,15 @@
   });
   els.body.addEventListener('pointerout', (e) => {
     const link = e.target.closest('[data-mod]');
-    if (link && !link.contains(e.relatedTarget) && !els.tooltip.contains(e.relatedTarget)) hideTooltip();
+    if (link && !link.contains(e.relatedTarget)) hideTooltip();
   });
   els.body.addEventListener('focusin', (e) => {
     const link = e.target.closest('[data-mod]');
     if (link) showTooltip(link);
   });
   els.body.addEventListener('focusout', (e) => {
-    if (!els.tooltip.contains(e.relatedTarget)) hideTooltip();
+    if (!e.target.contains(e.relatedTarget)) hideTooltip();
   });
-  els.tooltip.addEventListener('pointerleave', hideTooltip);
   window.addEventListener('scroll', hideTooltip, true);
   window.addEventListener('resize', hideTooltip);
   load();

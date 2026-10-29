@@ -9,14 +9,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./styles.css">
-  <link rel="stylesheet" href="./prime-sets.css">
-  <link rel="stylesheet" href="./mods.css">
+  <link rel="stylesheet" href="./styles.css?v=tooltip-no-scroll-2">
+  <link rel="stylesheet" href="./prime-sets.css?v=tooltip-no-scroll-2">
+  <link rel="stylesheet" href="./mods.css?v=tooltip-no-scroll-2">
   <link rel="icon" type="image/png" href="./favicon.png">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-MQFQ6QBJ6M"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-MQFQ6QBJ6M');</script>
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"58da4a2061cf43a3b5ef30803b7ceabc"}'></script>
-  <script src="./mods.js" defer></script>
+  <script src="./mods.js?v=tooltip-no-scroll-2" defer></script>
 </head>
 <body>
   <div class="app-shell">
@@ -33,19 +33,24 @@
       <a class="prime-source-link" href="https://relics.run/history/" target="_blank" rel="noopener noreferrer">Data: Relics.run ↗</a>
     </header>
     <main>
-      <section class="prime-hero">
+      <section class="prime-hero board-hero">
         <div class="eyebrow"><span class="eyebrow-line"></span> RELICS.RUN · DAILY PRICE HISTORY</div>
         <h1>Mod <span>Prices.</span></h1>
-        <p>Find tradable mods, compare Rank 0 and Max Rank values, and hover over a mod for documented acquisition sources.</p>
+        <p>Find tradable mods, compare Rank 0 and Max Rank prices, and hover over a mod for its effects and acquisition sources.</p>
         <div class="prime-hero-meta">
           <span id="mod-status" role="status">Loading the published snapshot…</span>
           <span class="prime-meta-divider"></span><span><strong id="mod-total">—</strong> mods tracked</span>
           <span class="prime-meta-divider"></span><span>Prices in <strong>Platinum</strong></span>
         </div>
+        <div class="hero-art" aria-hidden="true">
+          <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="orbit orbit-three"></div>
+          <div class="core-glow"></div><div class="core-shape"><i></i><i></i><i></i><i></i><span class="core-center"></span></div>
+          <span class="orbital-tick tick-one"></span><span class="orbital-tick tick-two"></span>
+        </div>
       </section>
       <section class="market-panel prime-panel mod-panel" aria-labelledby="mod-heading">
         <div class="section-head">
-          <div><h2 id="mod-heading">Mod price board</h2><p>Daily closed-order statistics. Hover over a mod name to see where it drops or is sold.</p></div>
+          <div><h2 id="mod-heading">Mod price board</h2><p>Daily closed-order statistics. Hover over a mod name for its rank-scaling effects and acquisition sources.</p></div>
           <button id="mod-refresh" class="refresh-button" type="button"><span class="refresh-icon" aria-hidden="true">↻</span> Check for updates</button>
         </div>
         <div id="mod-error" class="error-banner" role="alert" hidden></div>
@@ -64,7 +69,7 @@
           </fieldset>
           <label class="prime-priced-filter"><input id="mod-priced" type="checkbox"> Only with closed prices</label>
         </div>
-        <div class="prime-table-meta"><span id="mod-count">Loading…</span><span>Hover or focus a mod name for sources</span></div>
+        <div class="prime-table-meta"><span id="mod-count">Loading…</span></div>
         <div class="table-scroll-hint" role="note">↔ Scroll sideways on smaller screens to see all columns.</div>
         <div class="table-scroller">
           <table class="price-table prime-table mod-table">
@@ -86,7 +91,7 @@
         <div><strong>Acquisition notes</strong><p>Acquisition locations and chances are drawn from <a href="https://github.com/WFCD/warframe-items" target="_blank" rel="noopener noreferrer">WFCD's mod catalog</a>. Some Mods, such as those sold by rotating vendors or earned through special activities, have no documented drop record in that catalog; their tooltips link to the Wiki. Listings are market items, not Rivens, relics, or weapon parts.</p></div>
       </section>
     </main>
-    <footer><span><span class="footer-mark">✧</span> TENNO TICKER <span class="footer-sep">/</span> A community-made trading dashboard</span><span>Not affiliated with Digital Extremes, Warframe.market, Relics.run or WFCD · Warframe is a trademark of Digital Extremes.</span></footer>
+<footer><span><span class="footer-mark">✧</span> TENNO TICKER <span class="footer-sep">/</span> A community-made trading dashboard · <a href="https://github.com/Saerdev/Tenno-Ticker/discussions" target="_blank" rel="noopener noreferrer" aria-label="Contact and feedback via public GitHub Discussions">Contact &amp; Feedback ↗</a></span><span>Not affiliated with Digital Extremes, Warframe.market, Relics.run or WFCD · Warframe is a trademark of Digital Extremes.</span></footer>
   </div>
   <div id="mod-tooltip" class="acquisition-tooltip" role="tooltip" hidden></div>
 </body>

@@ -9,8 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./styles.css">
-  <link rel="stylesheet" href="./prime-sets.css">
+  <link rel="stylesheet" href="./styles.css?v=tooltip-no-scroll-2">
+  <link rel="stylesheet" href="./prime-sets.css?v=tooltip-no-scroll-2">
   <link rel="icon" type="image/png" href="./favicon.png">
   <script src="https://www.googletagmanager.com/gtag/js?id=G-MQFQ6QBJ6M" async></script>
   <script>
@@ -38,7 +38,7 @@
     </header>
 
     <main>
-      <section class="prime-hero">
+      <section class="prime-hero board-hero">
         <div class="eyebrow"><span class="eyebrow-line"></span> RELICS.RUN · DAILY PRICE HISTORY</div>
         <h1>Prime Set <span>Prices.</span></h1>
         <p>Compare daily reported prices for complete Prime sets. Search and sort the whole catalog in one place.</p>
@@ -48,6 +48,11 @@
           <span><strong id="prime-total">—</strong> sets tracked</span>
           <span class="prime-meta-divider"></span>
           <span>Prices in <strong>Platinum</strong></span>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="orbit orbit-three"></div>
+          <div class="core-glow"></div><div class="core-shape"><i></i><i></i><i></i><i></i><span class="core-center"></span></div>
+          <span class="orbital-tick tick-one"></span><span class="orbital-tick tick-two"></span>
         </div>
       </section>
 
@@ -104,7 +109,7 @@
         <div><strong>About the source and vault status</strong><p>Relics.run publishes dated market-history files. The date above the table refers to the source day, not the time you opened this page. Prices are indicative, not guaranteed executable trades. <b>Vaulted: Yes</b> means the <a href="https://wiki.warframe.com/w/Prime_Vault" target="_blank" rel="noopener noreferrer">Warframe Wiki</a> reports no relics for that set in normal drop tables. Special sources, owned relics and trading may still be available. Vault status is checked separately from prices; unavailable status shows —. <span id="prime-vault-checked"></span></p></div>
       </section>
     </main>
-    <footer><span><span class="footer-mark">✧</span> TENNO TICKER <span class="footer-sep">/</span> A community-made trading dashboard</span><span>Not affiliated with Digital Extremes or Relics.run · <a href="https://relics.run/history/" target="_blank" rel="noopener noreferrer">Prime price source: Relics.run</a> · Warframe is a trademark of Digital Extremes.</span></footer>
+<footer><span><span class="footer-mark">✧</span> TENNO TICKER <span class="footer-sep">/</span> A community-made trading dashboard · <a href="https://github.com/Saerdev/Tenno-Ticker/discussions" target="_blank" rel="noopener noreferrer" aria-label="Contact and feedback via public GitHub Discussions">Contact &amp; Feedback ↗</a></span><span>Not affiliated with Digital Extremes or Relics.run · <a href="https://relics.run/history/" target="_blank" rel="noopener noreferrer">Prime price source: Relics.run</a> · Warframe is a trademark of Digital Extremes.</span></footer>
   </div>
 </body>
 </html>

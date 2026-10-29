@@ -14,6 +14,11 @@
 .mod-more-wrap button:hover{background:#20483f}
 .mod-panel .prime-table-meta{flex-wrap:wrap}
 .mod-panel .table-scroll-hint{display:none}
-.mod-panel .acquisition-footer a,.acquisition-tooltip .acquisition-footer a{color:#d5bd95;font-weight:700}
+.mod-effect-section{margin-top:12px;padding:12px 0;border-top:1px solid #304651}
+.mod-source-section{padding-top:12px;border-top:1px solid #304651}
+.mod-effect-text{white-space:pre-line;overflow-wrap:anywhere;margin:9px 0 0;font-size:12px;line-height:1.65;color:#e5f3f0}
+.mod-effect-variant{margin-top:10px}
+.mod-effect-variant b{font-size:10px;letter-spacing:.08em;color:#e0c797}
+.mod-effect-variant .mod-effect-text{margin-top:3px}
 @media(max-width:900px){.mod-panel .table-scroll-hint{display:block}}
 @media(max-width:660px){.mod-panel .prime-table-meta{gap:4px}.mod-panel .rank-pick{width:100%}}

@@ -68,3 +68,18 @@
 .topbar-right{gap:12px}
 @media(max-width:980px){.topbar-right>.topbar-link{display:none}}
 @media(max-width:780px){.topbar-right{gap:0}.price-table.prime-table.arcane-table th:last-child,.price-table.prime-table.arcane-table td:last-child{padding-right:15px}}
+
+/* Shared hero treatment with the original orbital art on all three price boards. */
+.prime-hero.board-hero{position:relative;isolation:isolate;overflow:hidden;min-height:275px;margin:24px 0 2px;padding:46px 40px 42px;border:1px solid #284841;border-radius:13px;background:linear-gradient(115deg,#14262d 0%,#0d1c27 57%,#0b151f 100%);box-shadow:inset 0 1px 0 #b5fff00b}
+.board-hero::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse 48% 95% at 91% 50%,#2c857548,transparent 90%),linear-gradient(90deg,transparent 75%,#8ee5cc06 75%);opacity:.75}
+.board-hero .hero-art{width:500px;height:500px;right:24px;z-index:0;opacity:.83}
+.board-hero > :not(.hero-art){position:relative;z-index:1}
+.board-hero .eyebrow{margin-bottom:18px}
+.board-hero h1{position:relative;margin:0 0 14px;font-size:clamp(38px,5vw,68px)}
+.board-hero p{position:relative;max-width:630px;margin:0 0 22px;font-size:14px;line-height:1.75;color:#afc2c9}
+.board-hero .prime-hero-meta{position:relative;display:inline-flex;max-width:100%;padding:11px 15px;border:1px solid #38564f;border-radius:7px;background:#08191e99;color:#aebfc6}
+@media(max-width:800px){.prime-hero.board-hero{min-height:0;padding:35px 25px 32px;margin-top:16px}.board-hero .hero-art{right:-180px;opacity:.32}.board-hero p{font-size:13px}}
+@media(max-width:520px){.prime-hero.board-hero{padding:30px 18px 28px}.board-hero .hero-art{right:-280px;opacity:.22}.board-hero .prime-hero-meta{gap:9px;padding:10px 11px;font-size:11px}.board-hero .prime-meta-divider{display:none}}
+
+/* Informational hover cards never have an inner scrollbar, even if older inline styles linger. */
+#arcane-tooltip,#mod-tooltip{max-height:none!important;height:auto!important;overflow:visible!important;pointer-events:none}

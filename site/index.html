@@ -9,10 +9,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./styles.css">
-  <link rel="stylesheet" href="./prime-sets.css">
+  <link rel="stylesheet" href="./styles.css?v=tooltip-no-scroll-2">
+  <link rel="stylesheet" href="./prime-sets.css?v=tooltip-no-scroll-2">
   <link rel="stylesheet" href="./vendor-acquisition.css">
-  <script src="./app.js" defer></script>
+  <script src="./app.js?v=tooltip-no-scroll-2" defer></script>
   <link rel="icon" type="image/png" href="./favicon.png">
 </head>
 <!-- Google tag (gtag.js) -->
@@ -46,12 +46,16 @@
     </header>
 
     <main>
-      <section class="hero">
-        <div class="hero-text">
-          <div class="eyebrow"><span class="eyebrow-line"></span> PC / CROSSPLAY MARKET</div>
-          <h1>Warframe<br><span>Arcane Prices.</span></h1>
-          <p>Compare daily closed-order prices at rank 0 or max rank. Hover over an arcane to check its effects and where to get it.</p>
-          <div class="hero-meta"><span class="hero-dot"></span><span id="hero-status">Loading market snapshot</span><span class="meta-divider"></span><span><strong id="stat-total">—</strong> arcanes tracked</span><span class="meta-divider"></span><span>Prices in <strong>Platinum</strong> <span class="plat-symbol">✦</span></span></div>
+      <section class="prime-hero board-hero">
+        <div class="eyebrow"><span class="eyebrow-line"></span> RELICS.RUN · DAILY PRICE HISTORY</div>
+        <h1>Arcane <span>Prices.</span></h1>
+        <p>Compare daily closed-order prices at Rank 0 or Max Rank. Hover over an Arcane to check its effects and acquisition sources.</p>
+        <div class="prime-hero-meta">
+          <span id="hero-status" role="status">Loading market snapshot…</span>
+          <span class="prime-meta-divider"></span>
+          <span><strong id="stat-total">—</strong> arcanes tracked</span>
+          <span class="prime-meta-divider"></span>
+          <span>Prices in <strong>Platinum</strong></span>
         </div>
         <div class="hero-art" aria-hidden="true">
           <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="orbit orbit-three"></div>
@@ -95,7 +99,7 @@
 
       <section class="footnotes"><div><span class="footnote-icon">ⓘ</span><div><strong>How to read the board</strong><p><b>Median closed price</b> is the reported daily median for the selected rank, rounded down to whole Platinum. <b>Volume</b> is the reported daily closed-order count. <b>7-day change</b> compares unrounded daily medians exactly seven days apart. Missing values display —. These statistics are not verified player-to-player trades.</p></div></div><div><span class="footnote-icon">⌁</span><div><strong>About freshness</strong><p>Arcane pricing is sourced from Relics.run daily history. The hourly Warframe.market scan still supplies arcane details. The refresh button only checks for newer published data. Arcane effects and acquisition sources come from WFCD and may omit vendors or time-limited events.</p></div></div></section>
     </main>
-    <footer><span><span class="footer-mark">✧</span> TENNO TICKER <span class="footer-sep">/</span> A community-made trading dashboard</span><span>Not affiliated with Digital Extremes, Warframe.market, Relics.run or WFCD · <a href="https://github.com/WFCD/warframe-items" target="_blank" rel="noopener noreferrer">Drop data: WFCD</a> · Warframe is a trademark of Digital Extremes.</span></footer>
+<footer><span><span class="footer-mark">✧</span> TENNO TICKER <span class="footer-sep">/</span> A community-made trading dashboard · <a href="https://github.com/Saerdev/Tenno-Ticker/discussions" target="_blank" rel="noopener noreferrer" aria-label="Contact and feedback via public GitHub Discussions">Contact &amp; Feedback ↗</a></span><span>Not affiliated with Digital Extremes, Warframe.market, Relics.run or WFCD · <a href="https://github.com/WFCD/warframe-items" target="_blank" rel="noopener noreferrer">Drop data: WFCD</a> · Warframe is a trademark of Digital Extremes.</span></footer>
   </div>
   <div id="arcane-tooltip" class="acquisition-tooltip" role="tooltip" hidden></div>
 </body>

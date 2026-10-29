@@ -66,6 +66,67 @@ def normalized_name(value: str) -> str:
     return re.sub(r"[^a-z0-9]+", " ", value.casefold()).strip()
 
 
+EFFECT_NUMBER = re.compile(r"(?<![a-zA-Z0-9_.])([-+]?\d+(?:\.\d+)?(?:%|ms|s|m|x)?)", re.IGNORECASE)
+
+
+def effect_range(rank_zero: str | None, max_rank: str | None) -> str | None:
+    """Show precise rank-0 → max-rank numbers when the wording is unchanged.
+
+    Never imply a numerical progression if the effect text itself differs.
+    In that case the UI shows both full rank descriptions separately.
+    """
+    if not rank_zero or not max_rank:
+        return None
+    if rank_zero == max_rank:
+        return rank_zero
+    low = EFFECT_NUMBER.split(rank_zero)
+    high = EFFECT_NUMBER.split(max_rank)
+    if len(low) != len(high) or len(low) < 3 or any(
+        low[index] != high[index] for index in range(0, len(low), 2)
+    ):
+        return None
+    result = []
+    for index, part in enumerate(low):
+        if index % 2 == 0:
+            result.append(part)
+        else:
+            result.append(part if part == high[index] else f"{part} → {high[index]}")
+    return "".join(result)
+
+
+def mod_effects(record: dict) -> dict:
+    """Extract readable descriptions from WFCD's rank-by-rank mod effect data."""
+    def rank_text(rank: object) -> str | None:
+        if not isinstance(rank, dict):
+            return None
+        stats = rank.get("stats")
+        if isinstance(stats, str):
+            stats = [stats]
+        if not isinstance(stats, list):
+            return None
+        lines = []
+        for stat in stats:
+            if not isinstance(stat, str):
+                continue
+            for line in stat.replace("\\r\\n", "\n").replace("\\n", "\n").replace("\r", "\n").split("\n"):
+                cleaned = re.sub(r"[ \t]+", " ", line).strip()
+                if cleaned and cleaned not in lines:
+                    lines.append(cleaned)
+        return "\n".join(lines)[:3000] if lines else None
+
+    levels = record.get("levelStats")
+    first = rank_text(levels[0]) if isinstance(levels, list) and levels else None
+    last = rank_text(levels[-1]) if isinstance(levels, list) and levels else None
+    fallback = record.get("description")
+    fallback = fallback.strip()[:3000] if isinstance(fallback, str) and fallback.strip() else None
+    return {
+        "rank0": first,
+        "rankMax": last,
+        "range": effect_range(first, last),
+        "description": fallback,
+    }
+
+
 def mod_acquisitions(records: object) -> dict[str, dict]:
     if not isinstance(records, list):
         raise ValueError("WFCD mod acquisition data must be a list")
@@ -77,7 +138,9 @@ def mod_acquisitions(records: object) -> dict[str, dict]:
             continue
         name = record["name"]
         key = normalized_name(name)
-        details = result.setdefault(key, {"sources": [], "wikiUrl": None})
+        details = result.setdefault(key, {"sources": [], "wikiUrl": None, "effects": None})
+        if details["effects"] is None or not details["effects"].get("rank0"):
+            details["effects"] = mod_effects(record)
         wiki = record.get("wikiaUrl")
         if isinstance(wiki, str) and wiki.startswith("https://wiki.warframe.com/w/"):
             details["wikiUrl"] = wiki
@@ -136,6 +199,9 @@ def build_rows(items: list[dict], current: object, previous: object,
             details = acquisition.get(normalized_name(item["name"]), {})
             row["sources"] = details.get("sources", [])
             row["wikiUrl"] = details.get("wikiUrl") or "https://wiki.warframe.com/w/" + urllib.parse.quote(item["name"].replace(" ", "_"), safe="()")
+            row["effects"] = details.get("effects") or {
+                "rank0": None, "rankMax": None, "range": None, "description": None,
+            }
         result.append(row)
     return result
 
@@ -179,7 +245,11 @@ def update(mod_output: Path, arcane_output: Path, reuse: bool = True) -> str:
     try:
         date = latest_history_date(download(HISTORY_ROOT, 750_000).decode("utf-8"))
         if (previous_mods and previous_arcanes and reusable(previous_mods, date, "mod")
-                and reusable(previous_arcanes, date, "arcane")):
+                and reusable(previous_arcanes, date, "arcane")
+                and sum(bool(item.get("effects", {}).get("rank0") or
+                             item.get("effects", {}).get("description"))
+                        for item in previous_mods["items"] if isinstance(item, dict) and
+                        isinstance(item.get("effects"), dict)) >= 500):
             save_atomic(mod_output, previous_mods)
             save_atomic(arcane_output, previous_arcanes)
             return f"Reused published daily Mods and Arcanes snapshots from {date}"
@@ -196,7 +266,8 @@ def update(mod_output: Path, arcane_output: Path, reuse: bool = True) -> str:
             acquisitions = mod_acquisitions(parse_json(download(MOD_ACQUISITION_URL, 11_000_000), MOD_ACQUISITION_URL))
         except (ValueError, urllib.error.URLError, urllib.error.HTTPError, TimeoutError, OSError) as error:
             print(f"Mod acquisition metadata unavailable ({error}); retaining Wiki links and known sources")
-            acquisitions = {normalized_name(item["name"]): {"sources": item.get("sources", []), "wikiUrl": item.get("wikiUrl")}
+            acquisitions = {normalized_name(item["name"]): {"sources": item.get("sources", []), "wikiUrl": item.get("wikiUrl"),
+                                                             "effects": item.get("effects")}
                             for item in previous_mods.get("items", [])} if previous_mods else {}
         mods = snapshot("mod", date, market_items(catalog, "mod"), current, previous, acquisitions)
         arcanes = snapshot("arcane", date, market_items(catalog, "arcane"), current, previous)

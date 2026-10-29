@@ -17,7 +17,7 @@
     favorites: readFavorites(), view: 'rank0',
     favoritesOnly: false, sort: 'name', direction: 'asc',
     active: false, processed: 0, failed: 0, completedAt: 0, volumeUpdatedAt: 0,
-    renderPending: false, loadingCatalog: true, fetchSequence: 0, initialLoad: true, catalog: new Map(), tooltipTrigger: null, tooltipHideTimer: null,
+    renderPending: false, loadingCatalog: true, fetchSequence: 0, initialLoad: true, catalog: new Map(), tooltipTrigger: null,
   };
 
   // Vendor purchases are stored separately from price snapshots, so local preview
@@ -218,14 +218,9 @@
     return `<div class="acquisition-heading"><span>ARCANE DETAILS</span><strong>${esc(item.name)}</strong></div>
       <section class="effect-section"><div class="tooltip-section-heading">EFFECT <span class="effect-rank">${rankLabel}</span></div>${description}</section>
       <section class="sources-section"><div class="tooltip-section-heading">ACQUISITION</div>${vendorSection}${dropSection}</section>
-      <div class="acquisition-footer">${more}<span>Wiki ↗ in actions</span></div>`;
-  }
-  function cancelTooltipHide() {
-    clearTimeout(state.tooltipHideTimer);
-    state.tooltipHideTimer = null;
+      <div class="acquisition-footer">${more}</div>`;
   }
   function hideTooltip() {
-    cancelTooltipHide();
     if (state.tooltipTrigger) {
       state.tooltipTrigger.querySelector('a.item-name')?.removeAttribute('aria-describedby');
       state.tooltipTrigger = null;
@@ -233,7 +228,6 @@
     els.tooltip.hidden = true;
   }
   function showTooltip(trigger) {
-    cancelTooltipHide();
     if (!els.sources.checked || state.tooltipTrigger === trigger) return;
     const item = state.catalog.get(trigger.dataset.acquisition);
     if (!item) return;
@@ -250,7 +244,6 @@
       hideTooltip();
       return;
     }
-    els.tooltip.style.maxHeight = '';
     const bounds = els.tooltip.getBoundingClientRect();
     const margin = 12;
     const right = rect.right + margin;
@@ -263,12 +256,9 @@
       const below = innerHeight - rect.bottom - margin * 2;
       const above = rect.top - margin * 2;
       const placeBelow = below >= above;
-      const space = Math.max(100, placeBelow ? below : above);
-      els.tooltip.style.maxHeight = `${Math.min(450, space)}px`;
-      const height = els.tooltip.getBoundingClientRect().height;
       x = Math.max(margin, Math.min(rect.left, innerWidth - bounds.width - margin));
-      y = placeBelow ? rect.bottom + margin : rect.top - height - margin;
-      y = Math.max(margin, Math.min(y, innerHeight - height - margin));
+      y = placeBelow ? rect.bottom + margin : rect.top - bounds.height - margin;
+      y = Math.max(margin, y);
     }
     els.tooltip.style.left = `${x}px`;
     els.tooltip.style.top = `${y}px`;
@@ -484,11 +474,8 @@
     if (trigger && !trigger.contains(event.relatedTarget)) showTooltip(trigger);
   });
   els.body.addEventListener('pointerout', (event) => {
-    if (state.tooltipTrigger && !state.tooltipTrigger.contains(event.relatedTarget) &&
-        !els.tooltip.contains(event.relatedTarget)) hideTooltip();
+    if (state.tooltipTrigger && !state.tooltipTrigger.contains(event.relatedTarget)) hideTooltip();
   });
-  els.tooltip.addEventListener('pointerenter', cancelTooltipHide);
-  els.tooltip.addEventListener('pointerleave', hideTooltip);
   els.body.addEventListener('focusin', (event) => {
     const trigger = event.target.closest('[data-acquisition]');
     if (trigger) showTooltip(trigger);
