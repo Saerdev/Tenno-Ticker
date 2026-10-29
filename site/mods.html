@@ -11,12 +11,12 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./styles.css?v=tooltip-no-scroll-2">
   <link rel="stylesheet" href="./prime-sets.css?v=tooltip-no-scroll-2">
-  <link rel="stylesheet" href="./mods.css?v=tooltip-no-scroll-2">
+  <link rel="stylesheet" href="./mods.css?v=syndicate-vendors-1">
   <link rel="icon" type="image/png" href="./favicon.png">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-MQFQ6QBJ6M"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-MQFQ6QBJ6M');</script>
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"58da4a2061cf43a3b5ef30803b7ceabc"}'></script>
-  <script src="./mods.js?v=tooltip-no-scroll-2" defer></script>
+  <script src="./mods.js?v=syndicate-vendors-1" defer></script>
 </head>
 <body>
   <div class="app-shell">
@@ -69,6 +69,36 @@
           </fieldset>
           <label class="prime-priced-filter"><input id="mod-priced" type="checkbox"> Only with closed prices</label>
         </div>
+        <fieldset id="mod-syndicates" class="mod-syndicate-filter" aria-describedby="mod-syndicate-help">
+          <legend>SYNDICATE VENDORS</legend>
+          <div class="mod-syndicate-head">
+            <p id="mod-syndicate-help">Choose one or more vendors to see mods sold by any of them. Selecting a vendor switches to Rank 0 prices, highest first.</p>
+            <button id="mod-syndicate-clear" class="mod-syndicate-clear" type="button" hidden>Clear selection</button>
+          </div>
+          <div class="mod-syndicate-group" role="group" aria-labelledby="mod-primary-label">
+            <h3 id="mod-primary-label">Primary syndicates</h3>
+            <div class="mod-syndicate-list">
+              <label><input type="checkbox" name="mod-syndicate" value="Steel Meridian">Steel Meridian</label>
+              <label><input type="checkbox" name="mod-syndicate" value="Arbiters of Hexis">Arbiters of Hexis</label>
+              <label><input type="checkbox" name="mod-syndicate" value="Cephalon Suda">Cephalon Suda</label>
+              <label><input type="checkbox" name="mod-syndicate" value="The Perrin Sequence">The Perrin Sequence</label>
+              <label><input type="checkbox" name="mod-syndicate" value="Red Veil">Red Veil</label>
+              <label><input type="checkbox" name="mod-syndicate" value="New Loka">New Loka</label>
+            </div>
+          </div>
+          <div class="mod-syndicate-group" role="group" aria-labelledby="mod-other-label">
+            <h3 id="mod-other-label">Other standing vendors</h3>
+            <div class="mod-syndicate-list">
+              <label><input type="checkbox" name="mod-syndicate" value="Cephalon Simaris">Cephalon Simaris</label>
+              <label><input type="checkbox" name="mod-syndicate" value="Conclave">Conclave</label>
+              <label><input type="checkbox" name="mod-syndicate" value="Ostron">Ostron</label>
+              <label><input type="checkbox" name="mod-syndicate" value="Solaris United">Solaris United</label>
+              <label><input type="checkbox" name="mod-syndicate" value="Ventkids">Ventkids</label>
+              <label><input type="checkbox" name="mod-syndicate" value="Entrati">Entrati</label>
+              <label><input type="checkbox" name="mod-syndicate" value="Kahl's Garrison">Kahl's Garrison</label>
+            </div>
+          </div>
+        </fieldset>
         <div class="prime-table-meta"><span id="mod-count">Loading…</span></div>
         <div class="table-scroll-hint" role="note">↔ Scroll sideways on smaller screens to see all columns.</div>
         <div class="table-scroller">
@@ -88,7 +118,7 @@
       </section>
       <section class="prime-explanation" aria-label="Mod price definitions">
         <div><strong>How to read prices</strong><p><b>Median closed price</b> and <b>Volume</b> use Relics.run's reported <code>order_type: closed</code> records for the selected rank. Prices are rounded down to whole Platinum. <b>7-day change</b> compares unrounded medians to exactly seven days earlier. No price or trade record is shown as —.</p></div>
-        <div><strong>Acquisition notes</strong><p>Acquisition locations and chances are drawn from <a href="https://github.com/WFCD/warframe-items" target="_blank" rel="noopener noreferrer">WFCD's mod catalog</a>. Some Mods, such as those sold by rotating vendors or earned through special activities, have no documented drop record in that catalog; their tooltips link to the Wiki. Listings are market items, not Rivens, relics, or weapon parts.</p></div>
+        <div><strong>Acquisition notes</strong><p>Acquisition locations and chances are drawn from <a href="https://github.com/WFCD/warframe-items" target="_blank" rel="noopener noreferrer">WFCD's mod catalog</a>. Syndicate filters match documented standing-vendor sources; missing or outdated vendor entries may affect results. Compare Rank 0 prices for unranked standing purchases, and check the Wiki for current availability and standing costs. Listings are market items, not Rivens, relics, or weapon parts.</p></div>
       </section>
     </main>
 <footer><span><span class="footer-mark">✧</span> TENNO TICKER <span class="footer-sep">/</span> A community-made trading dashboard · <a href="https://github.com/Saerdev/Tenno-Ticker/discussions" target="_blank" rel="noopener noreferrer" aria-label="Contact and feedback via public GitHub Discussions">Contact &amp; Feedback ↗</a></span><span>Not affiliated with Digital Extremes, Warframe.market, Relics.run or WFCD · Warframe is a trademark of Digital Extremes.</span></footer>

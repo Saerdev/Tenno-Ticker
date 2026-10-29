@@ -6,11 +6,31 @@
     direction: $('mod-direction'), priced: $('mod-priced'), refresh: $('mod-refresh'),
     count: $('mod-count'), total: $('mod-total'), footer: $('mod-footer-count'),
     status: $('mod-status'), error: $('mod-error'), more: $('mod-more'), tooltip: $('mod-tooltip'),
+    syndicates: $('mod-syndicates'), clearSyndicates: $('mod-syndicate-clear'),
   };
   const state = {
     items: [], bySlug: new Map(), rank: 'rank0', sort: 'name', direction: 'asc',
     sourceDate: null, comparisonDate: null, loading: false, limit: 200, tooltipSlug: null,
+    syndicatesBySlug: new Map(), selectedSyndicateCount: 0,
   };
+  const syndicateNames = [
+    'Steel Meridian', 'Arbiters of Hexis', 'Cephalon Suda', 'The Perrin Sequence',
+    'Red Veil', 'New Loka', 'Cephalon Simaris', 'Conclave', 'Ostron',
+    'Solaris United', 'Ventkids', 'Entrati', "Kahl's Garrison",
+  ];
+  const selectedSyndicates = () => new Set(
+    [...els.syndicates.querySelectorAll('input[name="mod-syndicate"]:checked')].map((box) => box.value)
+  );
+  function documentedSyndicates(item) {
+    const found = new Set();
+    for (const source of Array.isArray(item.sources) ? item.sources : []) {
+      const location = typeof source.location === 'string' ? source.location : '';
+      const name = syndicateNames.find((vendor) =>
+        location === vendor || location.startsWith(vendor + ',') || location.startsWith(vendor + ' ('));
+      if (name) found.add(name);
+    }
+    return found;
+  }
   const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
   const num = (v) => typeof v === 'number' && Number.isFinite(v) ? v : null;
@@ -36,8 +56,10 @@
   }
   function visible() {
     const query = els.search.value.trim().toLowerCase();
+    const selected = selectedSyndicates();
     return state.items.filter((item) => (!query || item.name.toLowerCase().includes(query))
-      && (!els.priced.checked || num(rankStats(item).medianClosedPrice) !== null))
+      && (!els.priced.checked || num(rankStats(item).medianClosedPrice) !== null)
+      && (!selected.size || [...(state.syndicatesBySlug.get(item.slug) || [])].some((name) => selected.has(name))))
       .sort((a, b) => {
         const field = state.sort;
         const aVal = field === 'name' ? a.name.toLowerCase() : num(rankStats(a)[field]);
@@ -64,6 +86,7 @@
     els.footer.textContent = `Showing ${Math.min(items.length, state.limit).toLocaleString()} of ${items.length.toLocaleString()} matching mods`;
     els.total.textContent = state.items.length.toLocaleString();
     els.more.hidden = items.length <= state.limit;
+    els.clearSyndicates.hidden = selectedSyndicates().size === 0;
     els.head.querySelectorAll('th[data-sort]').forEach((th) => {
       const on = th.dataset.sort === state.sort;
       th.setAttribute('aria-sort', on ? (state.direction === 'asc' ? 'ascending' : 'descending') : 'none');
@@ -134,6 +157,7 @@
         throw new Error('Unsupported Mod data');
       state.items = data.items.filter((i) => i && typeof i.name === 'string' && typeof i.slug === 'string');
       state.bySlug = new Map(state.items.map((i) => [i.slug, i]));
+      state.syndicatesBySlug = new Map(state.items.map((i) => [i.slug, documentedSyndicates(i)]));
       state.sourceDate = data.sourceDate;
       state.comparisonDate = data.comparisonDate;
       els.status.textContent = 'Latest published snapshot · ' + data.sourceDate;
@@ -158,6 +182,24 @@
   }
   els.search.addEventListener('input', resetRender);
   els.priced.addEventListener('change', resetRender);
+  els.syndicates.addEventListener('change', (e) => {
+    if (!e.target.matches('input[name="mod-syndicate"]')) return;
+    const count = selectedSyndicates().size;
+    if (count > 0 && state.selectedSyndicateCount === 0) {
+      state.rank = 'rank0';
+      document.querySelector('input[name="mod-rank"][value="rank0"]').checked = true;
+      state.sort = 'medianClosedPrice';
+      state.direction = 'desc';
+      els.sort.value = state.sort;
+    }
+    state.selectedSyndicateCount = count;
+    resetRender();
+  });
+  els.clearSyndicates.addEventListener('click', () => {
+    els.syndicates.querySelectorAll('input[name="mod-syndicate"]').forEach((box) => { box.checked = false; });
+    state.selectedSyndicateCount = 0;
+    resetRender();
+  });
   document.querySelectorAll('input[name="mod-rank"]').forEach((radio) => radio.addEventListener('change', () => {
     if (radio.checked) { state.rank = radio.value; resetRender(); }
   }));

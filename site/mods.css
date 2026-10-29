@@ -2,6 +2,22 @@
 .rank-pick legend{padding:0;color:var(--subtle);font-size:10px;font-weight:800;letter-spacing:.1em}
 .rank-pick label{display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer}
 .rank-pick input{accent-color:var(--teal)}
+.mod-syndicate-filter{margin:0 27px 19px;padding:14px 17px 16px;min-width:0;border:1px solid #304851;border-radius:5px;background:#101e28}
+.mod-syndicate-filter legend{padding:0 8px;color:#91b4b4;font-size:10px;font-weight:800;letter-spacing:.12em}
+.mod-syndicate-head{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:13px}
+.mod-syndicate-head p{margin:0;color:#9bb0b8;font-size:12px;line-height:1.5}
+.mod-syndicate-clear{flex-shrink:0;padding:5px 8px;color:var(--teal);font-size:11px;font-weight:700;background:transparent;border:0;cursor:pointer}
+.mod-syndicate-clear:hover{text-decoration:underline}
+.mod-syndicate-clear:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.mod-syndicate-clear[hidden]{display:none}
+.mod-syndicate-group + .mod-syndicate-group{margin-top:13px;padding-top:13px;border-top:1px solid #2b3e48}
+.mod-syndicate-group h3{margin:0 0 8px;color:#8da2ac;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.mod-syndicate-list{display:flex;flex-wrap:wrap;gap:7px}
+.mod-syndicate-list label{display:inline-flex;align-items:center;gap:7px;min-height:31px;padding:5px 9px;border:1px solid #3a4c55;border-radius:4px;color:#c3d0d5;background:#14232e;font-size:12px;line-height:1.35;cursor:pointer}
+.mod-syndicate-list label:hover{border-color:#619e95}
+.mod-syndicate-list label:has(input:checked){border-color:#61aa9e;color:#d5f9ed;background:#1a3b3d}
+.mod-syndicate-list label:focus-within{outline:2px solid var(--teal);outline-offset:2px}
+.mod-syndicate-list input{margin:0;accent-color:var(--teal);cursor:pointer}
 .price-table.mod-table{min-width:850px}
 .price-table.mod-table th,.price-table.mod-table td{width:20%}
 .price-table.mod-table td:first-child{font-weight:700}
@@ -22,3 +38,4 @@
 .mod-effect-variant .mod-effect-text{margin-top:3px}
 @media(max-width:900px){.mod-panel .table-scroll-hint{display:block}}
 @media(max-width:660px){.mod-panel .prime-table-meta{gap:4px}.mod-panel .rank-pick{width:100%}}
+@media(max-width:660px){.mod-syndicate-filter{margin:0 14px 15px;padding:12px}.mod-syndicate-head{align-items:flex-start}.mod-syndicate-head p{font-size:11px}.mod-syndicate-list{gap:6px}.mod-syndicate-list label{font-size:11px}}
